@@ -48,7 +48,7 @@ function Sales(props) {
                                 </CRow>
                                 <CRow>
                                     <CCol className="cta">
-                                        <CButton className="button" type="submit" size="lg" color="secondary">Ver más</CButton>
+                                        <CButton className="button" to={"/planes"} type="submit" size="lg" color="secondary">Ver más</CButton>
                                     </CCol>
                                 </CRow>
                             </CCol>

@@ -50,10 +50,10 @@ function Plans(props) {
                 <CRow className="justify-content-md-center item-buttons">
                     {/* <CCol lg="1"></CCol> */}
                     <CCol className="col-md-auto">
-                        <CButton className="button1" type="submit" size="lg" color="secondary">Adquiere tu plan</CButton>
+                        <CButton to={"/planes"} className="button1" type="submit" size="lg" color="secondary">Adquiere tu plan</CButton>
                     </CCol>
                     <CCol className="col-md-auto">
-                        <CButton className="button2" type="submit" size="lg" color="secondary">Mensajeria Corporativa</CButton>
+                        <CButton to={"/mensajeria"} className="button2" type="submit" size="lg" color="secondary">Mensajeria Corporativa</CButton>
                     </CCol>
                     {/* <CCol lg="1"></CCol> */}
                 </CRow>

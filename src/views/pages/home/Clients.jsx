@@ -65,13 +65,23 @@ function Clients(props) {
 }
 
 const SingleClient = (props) => {
+    const links = {
+        'logo-aquacity': 'https://acqua-city.com/',
+        'logo-ciclon': 'https://productosciclon.com/',
+        'logo-foodservice': 'https://foodservice502.com.gt/',
+        'logo-minegocioenlinea': 'https://minegocioenlinea.com/',
+        'logo-pcr': 'https://www.ratingspcr.com/',
+        'logo-regus': 'https://www.regus.com/en-us',
+        'logo-universales': 'https://www.universales.com/',
+        'logo-worx': 'https://www.worx.com/',
+    }
     return (
         <CCol sm="3" className="container-client-img">
             <CImg fluid
                 className="client-img"
                 src={`img/clients/${props.img}.png`}
                 onClick={()=>{
-                    window.open('', '_blank').focus();
+                    window.open(links[props.img], '_blank').focus();
                 }}
             />
         </CCol>

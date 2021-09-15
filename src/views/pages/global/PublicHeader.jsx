@@ -39,8 +39,12 @@ function PublicHeader(props) {
 
     return (
       <div>
-        <CNavbar expandable="sm" className="home-header">
-          <CToggler inNavbar onClick={() => setIsOpen(!isOpen)}/>
+        <CNavbar expandable="sm" className="home-header" >
+          <CToggler
+            style={{
+              backgroundColor: '#153b75'
+            }}
+            inNavbar onClick={() => setIsOpen(!isOpen)}/>
           <CNavbarBrand>
               <CImg 
                 src={"img/logo_conecta.png"}
@@ -53,11 +57,11 @@ function PublicHeader(props) {
              
             </CNavbarNav>
             <CNavbarNav className="ml-auto home-header-options" >
-                <CNavLink className="home-header-options-item">Inicio</CNavLink>
-                <CNavLink className="home-header-options-item">Comercio</CNavLink>
-                <CNavLink className="home-header-options-item">Planes</CNavLink>
-                <CNavLink className="home-header-options-cta">Hacer un envío</CNavLink>
-                <CNavLink className="home-header-options-account">
+                <CNavLink className="home-header-options-item" to={"/"}>Inicio</CNavLink>
+                <CNavLink className="home-header-options-item" to={"/comercio"}>Comercio</CNavLink>
+                <CNavLink className="home-header-options-item" to={"/planes"}>Planes</CNavLink>
+                <CNavLink className="home-header-options-cta" to={"/envio"}>Hacer un envío</CNavLink>
+                <CNavLink className="home-header-options-account"  to={"/login"}>
                     <FontAwesomeIcon 
                     icon={faUserCircle}  
                     style={{marginRight:'.3rem'}} 

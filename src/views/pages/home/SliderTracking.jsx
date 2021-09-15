@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {
     CButton,
@@ -24,8 +24,129 @@ import {
   import CIcon from '@coreui/icons-react'
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
   import { faSearch } from '@fortawesome/free-solid-svg-icons'
+  import { ToastProvider, useToasts } from 'react-toast-notifications';
 
 function SliderTracking(props) {
+    const [form, setForm] = useState({
+        name: "",
+        email: "",
+        product: "",
+        phone: "",
+        message: ""
+    });
+
+
+    const [guia, setGuia] = useState("")
+    const { addToast } = useToasts();
+
+    useEffect(()=>{
+        setGuia("");
+        setForm({
+            name: "",
+            email: "",
+            product: "",
+            phone: "",
+            message: ""
+        });
+    },[])
+
+    // useEffect(()=>{
+    //     console.log(form);
+    // },[form])
+    
+    const handleChange = (e) =>{
+        const {name, value} = e.target;
+        setGuia(value);
+    }
+
+    const handleChangeForm = (e) =>{
+        const {id, value} = e.target;
+        const form_object = JSON.parse(JSON.stringify(form));
+        let new_form = {
+            ...form_object,
+            [id]: value
+        };
+        setForm(new_form);
+    }
+
+    const searchGuia = () =>{
+        let guia_without_space = guia.trim();
+        if(guia_without_space.length === 27){
+            addToast(guia_without_space, { 
+                appearance: 'info', 
+                autoDismiss : true ,
+                autoDismissTimeout : 3000
+            });
+        }else{
+            addToast("Guia no valida", { 
+                appearance: 'error', 
+                autoDismiss : true ,
+                autoDismissTimeout : 3000
+            });
+        }
+    }
+
+    const onSubmit = () =>{
+        let error = false;
+        let labels = {
+            name: "Nombre",
+            email: "Correo Electrónico",
+            product: "Producto",
+            phone: "Teléfono",
+            message: "Mensaje"
+        };
+
+        for (const [key, value] of Object.entries(form)) {
+            if(value.length === 0){
+                addToast(`El campo ${labels[key]} es requerido`, { 
+                    appearance: 'error', 
+                    autoDismiss : true ,
+                    autoDismissTimeout : 4000
+                });
+                error = true;
+            }
+            if(key === "email"){
+                const em = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if(!em.test(String(value).toLowerCase())){
+                    addToast(`El Correo Electrónico no es valido`, { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    error = true;
+                }
+            }
+            if(key === "phone"){
+                const te = /^[-\s\.]?[0-9]{4}[-\s\.]?[0-9]{4}$/im;
+                if(!te.test(String(value).toLowerCase())){
+                    addToast(`El Numero Telefonico no es valido`, { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    error = true;
+                }
+            }
+        }
+
+        if(!error){
+            addToast(`Pronto nos comunicaremos contigo`, { 
+                appearance: 'success', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            });
+            setTimeout(function(){ 
+                setForm({
+                    name: "",
+                    email: "",
+                    product: "",
+                    phone: "",
+                    message: ""
+                });
+            }, 1000);
+        }
+    }
+
     return (
         <>
          <CRow className="home-slider">
@@ -47,6 +168,8 @@ function SliderTracking(props) {
                                     <CCol lg="7" className="align-self-end search-input">
                                     <CInputGroup className="mb-1 input-tracker">
                                         <CInput 
+                                            value={guia}
+                                            name="guia"
                                             type="text" 
                                             placeholder="" 
                                             style={{
@@ -54,8 +177,14 @@ function SliderTracking(props) {
                                                 border: '0px',
                                                 fontSize: '1.5rem'
                                             }}
+                                            onChange={handleChange}
                                         />
-                                        <CInputGroupAppend>
+                                        <CInputGroupAppend
+                                            onClick={()=>{
+                                                searchGuia();
+                                            }}
+                                            style={{cursor:'pointer'}}
+                                            >
                                             <CInputGroupText>
                                             <FontAwesomeIcon 
                                                 icon={faSearch}  
@@ -81,17 +210,18 @@ function SliderTracking(props) {
                                 >Quiero Conectarme:</h3>
                             </CCol>
                         </CRow>
+                        {/* <form> */}
                         <CFormGroup>
-                            <CInput id="name" type="text" placeholder="Nombre Completo" />
+                            <CInput value={form.name} id="name" type="text" onChange={handleChangeForm} placeholder="Nombre Completo" required/>
                         </CFormGroup>
                         <CFormGroup>
-                            <CInput id="email" type="email" placeholder="Correo electrónico" />
+                            <CInput value={form.email} id="email" type="email" onChange={handleChangeForm} placeholder="Correo electrónico" required/>
                         </CFormGroup>
                         <CFormGroup>
-                            <CInput id="product" placeholder="Tu producto: ej. ropa, comida, etc" />
+                            <CInput value={form.product} id="product" onChange={handleChangeForm} placeholder="Tu producto: ej. ropa, comida, etc" required/>
                         </CFormGroup>
                         <CFormGroup>
-                            <CInput id="tel" type="tel" placeholder="Teléfono: 0000-0000" pattern="[0-9]{4}-[0-9]{4}" />
+                            <CInput value={form.phone} id="phone" type="tel" onChange={handleChangeForm} placeholder="Teléfono: 0000-0000" pattern="[0-9]{4}-[0-9]{4}" required/>
                         </CFormGroup>
                         <CFormGroup>
                             <CTextarea 
@@ -99,15 +229,18 @@ function SliderTracking(props) {
                                 id="message" 
                                 rows="4"
                                 placeholder="Escribe tu mensaje" 
+                                value={form.message}
+                                onChange={handleChangeForm}
                             />
                         </CFormGroup>
                         <CFormGroup className="form-actions" style={{marginBottom: '0'}}>
                             <CRow className="justify-content-md-center item-buttons">
                                 <CCol className="col-md-auto">
-                                    <CButton className="button" type="submit" size="lg" color="secondary">Conectar</CButton>
+                                    <CButton className="button" type="submit" size="lg" color="secondary" onClick={onSubmit}>Conectar</CButton>
                                 </CCol>
                             </CRow>
                         </CFormGroup>
+                        {/* </form> */}
                     </CCardBody>
                 </CCard>
             </CCol>

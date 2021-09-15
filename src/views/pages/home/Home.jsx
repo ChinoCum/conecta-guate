@@ -15,6 +15,7 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { ToastProvider, useToasts } from 'react-toast-notifications';
 
 import PublicHeader from '../global/PublicHeader'
 import SliderTracking from './SliderTracking'

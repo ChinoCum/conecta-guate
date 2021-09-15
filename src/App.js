@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
+import { ToastProvider, useToasts } from 'react-toast-notifications';
 import './scss/style.scss';
 import './index.css'
 
@@ -21,15 +22,20 @@ class App extends Component {
 
   render() {
     return (
-      <HashRouter>
-          <React.Suspense fallback={loading}>
-            <Switch>
-              <Route exact path="/" name="Home Page" render={props => <Home {...props}/>} />
-              <Route exact path="/login" name="Login" render={props => <Login {...props}/>} />
-              <Route path="/creacion-pedido" name="Creacion de Pedido" render={props => <TheLayout {...props}/>} />
-            </Switch>
-          </React.Suspense>
-      </HashRouter>
+      <ToastProvider 
+        position="bottom-center"
+        reverseOrder={false}
+        >
+        <HashRouter>
+            <React.Suspense fallback={loading}>
+              <Switch>
+                <Route exact path="/" name="Home Page" render={props => <Home {...props}/>} />
+                <Route exact path="/login" name="Login" render={props => <Login {...props}/>} />
+                <Route path="/creacion-pedido" name="Creacion de Pedido" render={props => <TheLayout {...props}/>} />
+              </Switch>
+            </React.Suspense>
+        </HashRouter>
+      </ToastProvider>
     );
   }
 }
