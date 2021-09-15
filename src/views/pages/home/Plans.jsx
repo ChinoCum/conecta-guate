@@ -1,4 +1,5 @@
 import React from 'react'
+import { useHistory } from "react-router-dom";
 import {
     CButton,
     CCard,
@@ -17,6 +18,7 @@ import {
 
 
 function Plans(props) {
+    const history = useHistory();
     const img1 = "img/icons/item-1.png";
     const img2 = "img/icons/item-2.png";
     const img3 = "img/icons/item-3.png";
@@ -50,10 +52,14 @@ function Plans(props) {
                 <CRow className="justify-content-md-center item-buttons">
                     {/* <CCol lg="1"></CCol> */}
                     <CCol className="col-md-auto">
-                        <CButton to={"/planes"} className="button1" type="submit" size="lg" color="secondary">Adquiere tu plan</CButton>
+                        <CButton onClick={()=>{
+                             history.push('/planes');
+                        }} className="button1" type="submit" size="lg" color="secondary">Adquiere tu plan</CButton>
                     </CCol>
                     <CCol className="col-md-auto">
-                        <CButton to={"/mensajeria"} className="button2" type="submit" size="lg" color="secondary">Mensajeria Corporativa</CButton>
+                        <CButton onClick={()=>{
+                             history.push('/mensajeria');
+                        }} className="button2" type="submit" size="lg" color="secondary">Mensajeria Corporativa</CButton>
                     </CCol>
                     {/* <CCol lg="1"></CCol> */}
                 </CRow>

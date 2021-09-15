@@ -14,9 +14,11 @@ import {
   import CIcon from '@coreui/icons-react'
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
   import { faSearch } from '@fortawesome/free-solid-svg-icons'
+  import { useHistory } from "react-router-dom";
 
 
 function Sales(props) {
+    const history = useHistory();
     return (
        <>
             <CRow className="home-sales">
@@ -48,7 +50,9 @@ function Sales(props) {
                                 </CRow>
                                 <CRow>
                                     <CCol className="cta">
-                                        <CButton className="button" to={"/planes"} type="submit" size="lg" color="secondary">Ver más</CButton>
+                                        <CButton className="button" onClick={()=>{
+                                            history.push('/ventas');
+                                        }}  type="submit" size="lg" color="secondary">Ver más</CButton>
                                     </CCol>
                                 </CRow>
                             </CCol>
