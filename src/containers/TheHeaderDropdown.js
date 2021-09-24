@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {
   CBadge,
   CDropdown,
@@ -8,9 +8,25 @@ import {
   CImg
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { useHistory } from "react-router-dom";
+import {reactLocalStorage} from 'reactjs-localstorage';
 
 const TheHeaderDropdown = () => {
+  const [user, setUser] = useState(null)
+  const history = useHistory();
+
+  useEffect(()=>{
+    const user_object = reactLocalStorage.getObject('user');
+    console.log(user_object);
+    if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+        history.push('/login');
+    }else{
+      setUser(user_object);
+    }
+  },[])
+
   return (
+    (user) ?
     <CDropdown
       inNav
       className="c-header-nav-items mx-2"
@@ -24,7 +40,7 @@ const TheHeaderDropdown = () => {
           />
         </div>
         <div className="username-conecta-header">
-          Berenice Co. 
+          {user.name.substring(0,7)}
         </div>
         <CIcon 
           style={{color:'#91b515 !important'}} 
@@ -33,7 +49,30 @@ const TheHeaderDropdown = () => {
         />
         
       </CDropdownToggle>
+      <CDropdownMenu className="pt-0" placement="bottom-end">
+        <CDropdownItem
+          header
+          tag="div"
+          color="light"
+          className="text-center"
+        >
+          <strong>Cuenta</strong>
+        </CDropdownItem>
+        <CDropdownItem>
+          <CIcon name="cil-user" className="mfe-2" />Perfil
+        </CDropdownItem>
+        <CDropdownItem>
+          <CIcon name="cil-settings" className="mfe-2" />
+          Cambio de Contraseña
+        </CDropdownItem>
+        <CDropdownItem divider />
+        <CDropdownItem>
+          <CIcon name="cil-lock-locked" className="mfe-2" />
+          Salir
+        </CDropdownItem>
+      </CDropdownMenu>
     </CDropdown>
+    : null
   )
 }
 

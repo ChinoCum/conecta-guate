@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react'
+import React, {Fragment, useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import {
   CButton,
@@ -16,13 +16,32 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { useHistory } from "react-router-dom";
+import {reactLocalStorage} from 'reactjs-localstorage';
+import { ToastProvider, useToasts } from 'react-toast-notifications';
+import axios from 'axios';
 
 const Login = () => {
-
+  const { addToast } = useToasts();
+  const history = useHistory();
   const [login, setLogin] = useState({
     username: "",
     password: ""
   });
+
+  useEffect(()=>{
+    const user = reactLocalStorage.getObject('user');
+    console.log(user);
+    console.log(Object.keys(user));
+    if(Object.keys(user).length > 0){
+      if(user !== 'undefined' && user !== undefined && user !== null){
+        console.log('teeeeeeeeest');
+        if(user.token.length > 0){
+          history.push('/creacion-pedido');
+        }
+      }
+   }
+  },[])
 
   const handleChange = (e) => {
     const {id, value} = e.target;
@@ -33,6 +52,87 @@ const Login = () => {
     };
     console.log(new_data);
     setLogin(new_data);
+  }
+
+  const onSubmit = () =>{
+    let error = false;
+    let labels = {
+      username: "Correo Electrónico",
+      password: "Contraseña"
+  };
+
+    for (const [key, value] of Object.entries(login)) {
+        if(value.length === 0){
+            addToast(`El campo ${labels[key]} es requerido`, { 
+                appearance: 'error', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            });
+            error = true;
+        }
+    }
+
+    const em = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if(!em.test(String(login.username).toLowerCase())){
+        addToast(`El Correo Electrónico no es valido`, { 
+            appearance: 'error', 
+            autoDismiss : true ,
+            autoDismissTimeout : 4000
+        });
+        error = true;
+    }
+
+    if(error){
+      return false;
+    }
+
+    let object_login = {
+      email: login.username,
+      password: login.password,
+      remember_me: true
+    }
+
+    axios({
+      method: 'post',
+      url: 'https://ws.conectaguate.com/api/auth/login',
+      data: object_login,
+      headers: {"Access-Control-Allow-Origin": "*"}
+    }).then(
+      (result) => {
+        console.log(result);
+        addToast(`Login Exitoso`, { 
+            appearance: 'success', 
+            autoDismiss : true ,
+            autoDismissTimeout : 4000
+        });
+        reactLocalStorage.setObject('user', {
+          'name': login.username,
+          'email': login.username,
+          'token': result.data.access_token
+        });
+
+        setLogin({
+          username: "",
+          password: ""
+        })
+
+        history.push('/creacion-pedido');
+      },
+      // Note: it's important to handle errors here
+      // instead of a catch() block so that we don't swallow
+      // exceptions from actual bugs in components.
+      (error) => {
+        if (error.response) {
+          console.log(error.response);
+          addToast(`Usuario o Contraseña incorrectos`, { 
+              appearance: 'error', 
+              autoDismiss : true ,
+              autoDismissTimeout : 4000
+          });
+        }
+      }
+    );
+
   }
 
   return (
@@ -75,7 +175,7 @@ const Login = () => {
                       </CRow>
                       <CRow>
                         <CCol xs="12">
-                          <CButton color="primary" className="px-12" style={{width: '100%', background:'#7979e7'}} to="/creacion-pedido">Continuar</CButton>
+                          <CButton color="primary" className="px-12" style={{width: '100%', background:'#7979e7'}} onClick={onSubmit}>Continuar</CButton>
                         </CCol>
                       </CRow>
                       {/* Separate */}
@@ -134,6 +234,11 @@ const Login = () => {
                                 />
                               Iniciar Sesión con Google
                           </CButton>
+                        </CCol>
+                      </CRow>
+                      <CRow>
+                        <CCol xs="12" className="text-left">
+                          ¿No tienes cuenta? <CButton color="link" style={{paddingLeft: '3px'}} to="/register">Registrate</CButton>
                         </CCol>
                       </CRow>
                     </CForm>

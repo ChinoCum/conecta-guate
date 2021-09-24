@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react'
+import React, {Fragment, useState, useEffect, useHistory} from 'react'
 import PropTypes from 'prop-types'
 import {
     CButton,
@@ -34,8 +34,8 @@ import {
   import CIcon from '@coreui/icons-react'
 
 function PublicHeader(props) {
-
     const [isOpen, setIsOpen] = useState(false);
+  
 
     return (
       <div>

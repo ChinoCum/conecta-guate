@@ -838,10 +838,33 @@ body .c-body .creacion-pedido {
   background-color: #f8f8f8;
 }
 
+body .c-body .creacion-pedido .wrap {
+  text-align: center;
+  margin: 20px;
+  position: relative;
+}
+
+body .c-body .creacion-pedido .wrap:before {
+  content: "";
+  position: absolute;
+  top: 40%;
+  left: 0;
+  border-top: 2px solid #153b75;
+  background: #153b75;
+  width: 70%;
+  left: 15%;
+  transform: translateY(-50%);
+}
+
 body .c-body .creacion-pedido #progressbar {
   margin-bottom: 0;
   overflow: hidden;
   color: lightgrey;
+
+  padding: 0 10px;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
 }
 
 body .c-body .creacion-pedido #progressbar .active:before {
@@ -1016,6 +1039,16 @@ body .c-body .creacion-pedido-button-envio .back {
     padding-left: 0rem;
     padding-right: 0rem;
   }
+
+  body .c-body .creacion-pedido .card-input {
+    font-size: 0.8rem;
+    width: 100% !important;
+  }
+
+  body .c-body .creacion-pedido .row-package .card-input {
+    font-size: 0.8rem;
+    width: 100%;
+  }
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
@@ -1024,12 +1057,32 @@ body .c-body .creacion-pedido-button-envio .back {
     padding-left: 0rem;
     padding-right: 0rem;
   }
+
+  body .c-body .creacion-pedido .card-input {
+    font-size: 0.8rem;
+    width: 100% !important;
+  }
+
+  body .c-body .creacion-pedido .row-package .card-input {
+    font-size: 0.8rem;
+    width: 100%;
+  }
 }
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) and (max-width: 992px) {
   body .c-body .creacion-pedido-card .card-body {
     padding-left: 0rem;
     padding-right: 0rem;
+  }
+
+  body .c-body .creacion-pedido .card-input {
+    font-size: 0.8rem;
+    width: 100% !important;
+  }
+
+  body .c-body .creacion-pedido .row-package .card-input {
+    font-size: 0.8rem;
+    width: 100%;
   }
 }
 
@@ -1046,11 +1099,16 @@ body .c-body .creacion-pedido .card-row-titles {
 }
 
 body .c-body .creacion-pedido .card-title-column {
-  font-size: 1rem;
+  font-size: 0.7rem;
   color: #153b75;
   font-weight: 500;
   margin-bottom: 0.5rem;
   margin-top: 1.5rem;
+}
+
+body .c-body .creacion-pedido .card-input {
+  font-size: 0.8rem;
+  width: 80%;
 }
 
 body .c-body .creacion-pedido .card-title-column .asterisk {

@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react'
+import React, {Fragment, useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import {
   CButton,
@@ -18,16 +18,32 @@ import {
 import CIcon from '@coreui/icons-react'
 import { ToastProvider, useToasts } from 'react-toast-notifications';
 import axios from 'axios';
+import { useHistory } from "react-router-dom";
+import {reactLocalStorage} from 'reactjs-localstorage';
 
 
 const Register = () => {
   const { addToast } = useToasts();
-
+  const history = useHistory();
+  
   const [register, setRegister] = useState({
     name: "",
     username: "",
     password: ""
   });
+
+
+  useEffect(()=>{
+    const user = reactLocalStorage.getObject('user');
+    console.log(user);
+    if(Object.keys(user).length  > 0){
+      if(user !== 'undefined' && user !== undefined && user !== null){
+        if(user.token.length > 0){
+          history.push('/creacion-pedido');
+        }
+      }
+    }
+  },[])
 
   const handleChange = (e) => {
     const {id, value} = e.target;
@@ -83,40 +99,84 @@ const Register = () => {
       return false;
     }
 
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ })
-  };
+    // const params = new URLSearchParams();
+    // params.append('param1', 'value1');
+    // params.append('param2', 'value2');
+
+    let object_register = {
+      name: register.name,
+      email: register.username,
+      password: register.password,
+      password_confirmation: register.password
+    }
+
+    let object_login = {
+      email: register.username,
+      password: register.password,
+      remember_me: true
+    }
+
+    // const params = new URLSearchParams();
+    // params.append('name', register.name);
+    // params.append('email', register.username);
+    // params.append('password', register.password);
+    // params.append('password_confirmation', register.password);
 
   axios({
     method: 'post',
     url: 'https://ws.conectaguate.com/api/auth/signup',
-    data: {
-      ...register 
-    }
-  }).then(res => res.json())
-  .then(
+    data: object_register,
+    headers: {"Access-Control-Allow-Origin": "*"}
+  }).then(
     (result) => {
-      console.log(result);
-      addToast(`Registro Exitoso`, { 
-          appearance: 'success', 
-          autoDismiss : true ,
-          autoDismissTimeout : 4000
-      });
-      setRegister({
-        name: "",
-        username: "",
-        password: ""
-      })
+        axios({
+          method: 'post',
+          url: 'https://ws.conectaguate.com/api/auth/login',
+          data: object_login,
+          headers: {"Access-Control-Allow-Origin": "*"}
+        }).then(
+          (result) => {
+            console.log(result);
+            addToast(`Registro Exitoso`, { 
+                appearance: 'success', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            });
+            reactLocalStorage.setObject('user', {
+              'name': register.name,
+              'email': register.username,
+              'token': result.data.access_token
+            });
+
+            setRegister({
+              name: "",
+              username: "",
+              password: ""
+            })
+
+            history.push('/creacion-pedido');
+          },
+          // Note: it's important to handle errors here
+          // instead of a catch() block so that we don't swallow
+          // exceptions from actual bugs in components.
+          (error) => {
+            if (error.response) {
+              console.log(error.response);
+            }
+          }
+        );
     },
     // Note: it's important to handle errors here
     // instead of a catch() block so that we don't swallow
     // exceptions from actual bugs in components.
     (error) => {
-      console.log(error);
+      if (error.response) {
+        console.log(error.response);
+      }
     }
   );
+
+  
     
 
 
@@ -221,7 +281,7 @@ const Register = () => {
                       </CRow>
                       <CRow>
                         <CCol xs="12" className="text-left">
-                          ¿Ya usas Conecta Guate? <CButton color="link" style={{paddingLeft: '3px'}}>Iniciar sesión</CButton>
+                          ¿Ya usas Conecta Guate? <CButton color="link" style={{paddingLeft: '3px'}} to="/login">Iniciar sesión</CButton>
                         </CCol>
                       </CRow>
                       <CRow>
