@@ -26,10 +26,27 @@ const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 
 const CreacionPedido = () => {
     const [step, setStep] = useState(0);
+    const [data, setData] = useState({});
+
+    const handleChange = (e) => {
+        const {id, value} = e.target;
+        let data_copy = JSON.parse(JSON.stringify(data));
+        data_copy = {
+            ...data_copy,
+            [id]: value 
+        }
+        console.log(data_copy);
+        setData(data_copy);
+    }
 
   return (
     <div className="creacion-pedido">
-        {(step === 0) ? <Step1 changeStep={setStep} /> : (step === 1) ? <Step2 changeStep={setStep} />:  <Step3 changeStep={setStep} />}
+        {(step === 0) ? 
+        <Step1 changeStep={setStep} handleChange={handleChange} />
+         : 
+         (step === 1) ? <Step2 changeStep={setStep} />
+         :  
+         <Step3 changeStep={setStep} />}
     </div>
   )
 }
@@ -64,43 +81,73 @@ const Step1 = (props) => {
                     {/* // MARK: Origen */}
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="origen" data-end="t" placeholder="¿Quién envia? *" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">¿Quién envia?</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="origin" data-end="t" placeholder="" required />
+                                </CCol>
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="name_company" placeholder="Nombre de empresa" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Nombre de empresa</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="name_company" placeholder="" required />
+                                </CCol>
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="phone_number" placeholder="Telefono *" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Teléfono</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="phone_number" placeholder="" required />
+                                </CCol>
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="email" placeholder="Correo electrónico *" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Correo electrónico</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="email" placeholder="" required />
+                                </CCol>
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="municipio" placeholder="Poblado/Municipio *" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Poblado/Municipio</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="municipio" placeholder="" required />
+                                </CCol>
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="address" placeholder="Dirección *" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Dirección</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="address" placeholder="" required />
+                                </CCol>
                             </CFormGroup>
                         </CCol>
                     </CRow>
@@ -119,50 +166,85 @@ const Step1 = (props) => {
                     {/* // MARK: Origen */}
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="recibe" data-end="t" placeholder="¿Quién recibe? *" required />
+                            <CFormGroup row> 
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">¿Quién recibe?</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="recibe" data-end="t" placeholder="" required />
+                                </CCol>
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="name_contact" placeholder="Nombre de contacto" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Nombre de contacto</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="name_contact" placeholder="" required />
+                                </CCol>
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="phone_number_contact" placeholder="Telefono *" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Teléfono</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="phone_number_contact" placeholder="" required />
+                                </CCol>   
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="email_contact" placeholder="Correo electrónico *" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Correo electrónico</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="email_contact" placeholder="" required />
+                                </CCol>        
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="municipio_contact" placeholder="Poblado/Municipio *" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Poblado/Municipio</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="municipio_contact" placeholder="" required />
+                                </CCol>   
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="address_contact" placeholder="Dirección *" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Dirección</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="address_contact" placeholder="" required />
+                                </CCol>   
                             </CFormGroup>
                         </CCol>
                     </CRow>
                     <CRow>
                         <CCol xs="12">
-                            <CFormGroup>
-                                <CInput className="card-input" id="ref_address_contact" placeholder="Referencias de dirección *" required />
+                            <CFormGroup row>
+                                <CCol xs="12" md="3">
+                                    <CLabel htmlFor="text-input">Referencias de dirección</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                </CCol>
+                                <CCol xs="12" md="9">
+                                    <CInput onChange={props.handleChange} className="card-input" id="ref_address_contact" placeholder="" required />
+                                </CCol>
                             </CFormGroup>
                         </CCol>
                     </CRow>

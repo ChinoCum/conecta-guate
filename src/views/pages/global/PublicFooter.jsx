@@ -42,19 +42,19 @@ function PublicFooter(props) {
                     <CCol lg="8">
                         <CRow>
                             <CCol lg="4">
-                               <LinkFooter name="FAQs" link="/faqs"/> 
-                               <LinkFooter name="Cobertura" link="/cobertura"/> 
-                               <LinkFooter name="Nosotros" link="/nosotros"/> 
+                               <LinkFooter name="FAQs" type="link" link="/faqs"/> 
+                               <LinkFooter name="Cobertura" type="link" link="/cobertura"/> 
+                               <LinkFooter name="Nosotros" type="link" link="/nosotros"/> 
                             </CCol>
                             <CCol lg="4">
-                                <LinkFooter name="Bolsa de empleo" link="/bolsa-de-empleo"/> 
-                                <LinkFooter name="Comercios" link="/comercios"/> 
-                                <LinkFooter name="Contacto" link="/contacto"/> 
+                                <LinkFooter name="Bolsa de empleo" type="link" link="/bolsa-de-empleo"/> 
+                                <LinkFooter name="Comercios" type="link" link="/comercios"/> 
+                                <LinkFooter name="Contacto" type="link" link="/contacto"/> 
                             </CCol>
                             <CCol lg="4">
-                                <LinkFooter name="15 ave 'A' 21-13 Zona 13" external={true} link="https://www.google.com/maps/place/Conecta/@14.6104537,-90.5005334,15z/data=!4m5!3m4!1s0x0:0x4c595030980a1a89!8m2!3d14.6104537!4d-90.5005334"/> 
-                                <LinkFooter name="(502) 2306-9030" disabled={true} link=""/> 
-                                <LinkFooter name="info@conectaguate.com" disabled={true} link=""/> 
+                                <LinkFooter name="15 ave 'A' 21-13 Zona 13" type="link" external={true} link="https://www.google.com/maps/place/Conecta/@14.6104537,-90.5005334,15z/data=!4m5!3m4!1s0x0:0x4c595030980a1a89!8m2!3d14.6104537!4d-90.5005334"/> 
+                                <LinkFooter name="(502) 2306-9030" type="tel" disabled={true} link=""/> 
+                                <LinkFooter name="info@conectaguate.com" type="mail" disabled={true} link=""/> 
                             </CCol>
                         </CRow>
                     </CCol>
@@ -71,6 +71,9 @@ function PublicFooter(props) {
                                 <CImg 
                                     className="social-icons"
                                     src="/img/icons/instagram.svg"
+                                    onClick={()=>{
+                                        window.open('https://www.instagram.com/conectagt_/', '_blank').focus();
+                                    }}
                                 />
                             </CCol>
                         </CRow>
@@ -84,26 +87,56 @@ function PublicFooter(props) {
 const LinkFooter = (props) =>{
     const new_tab = (props.external) ? true :false;
     const disabled = (props.disabled) ? true : false;
-    return (
-        <CRow>
-            {(props.external)?
-                <CLink 
+
+
+    const render_link = (type) =>{
+        let render;
+        if(type === 'link'){
+            if(props.external){
+                render = (<CLink 
                     className="link-item" 
                     href={`${props.link}`}
                     target={(new_tab)? "_blank" : ""}
                     disabled={(disabled)? true : false}
                 >
                     {props.name}
-                </CLink>
-            :
-                <CLink 
+                </CLink>);
+            }else{
+                render = (<CLink 
                     className="link-item" 
                     to={`${props.link}`}
                     disabled={(disabled)? true : false}
                 >
                     {props.name}
-                </CLink>
+                </CLink>);
             }
+        }else if(type === 'tel'){
+            render = (<CLink 
+                className="link-item" 
+                onClick={()=>{
+                    window.open(`tel:23069030`);
+                }}
+            >
+                {props.name}
+            </CLink>);
+        }else if(type === 'mail'){
+            render = (<CLink 
+                className="link-item" 
+                onClick={()=>{
+                    window.open(`mailto:${props.name}`);
+                }}
+            >
+                {props.name}
+            </CLink>);
+        }
+
+        return render;
+    }
+
+
+    return (
+        <CRow>
+            {render_link(props.type)}
         </CRow>
     )
 }

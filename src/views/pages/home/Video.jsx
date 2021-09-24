@@ -52,9 +52,9 @@ function Video(props) {
                                 </CCol> :
                                 <CCol>
                                     <CEmbed
-                                            ratio="16by9"
+                                        ratio="16by9"
                                     >
-                                        <iframe src="https://www.youtube.com/embed/fZYH9ZraTvY" title="YouTube video player"></iframe> 
+                                        <iframe src="https://www.youtube.com/embed/fZYH9ZraTvY?autoplay=1&cc_load_policy=0" allow="autoplay; encrypted-media"  title="YouTube video player" frameborder="0" allowfullscreen></iframe> 
                                     </CEmbed>
                                 </CCol>
                             }

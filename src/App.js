@@ -15,6 +15,7 @@ const loading = (
 const TheLayout = React.lazy(() => import('./containers/TheLayout'));
 
 // Pages
+const Register = React.lazy(() => import('./views/pages/register/Register'));
 const Login = React.lazy(() => import('./views/pages/login/Login'));
 const Home = React.lazy(() => import('./views/pages/home/Home'));
 
@@ -31,6 +32,7 @@ class App extends Component {
               <Switch>
                 <Route exact path="/" name="Home Page" render={props => <Home {...props}/>} />
                 <Route exact path="/login" name="Login" render={props => <Login {...props}/>} />
+                <Route exact path="/register" name="Register" render={props => <Register {...props}/>} />
                 <Route path="/creacion-pedido" name="Creacion de Pedido" render={props => <TheLayout {...props}/>} />
               </Switch>
             </React.Suspense>

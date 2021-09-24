@@ -60,7 +60,7 @@ function PublicHeader(props) {
                 <CNavLink className="home-header-options-item" to={"/"}>Inicio</CNavLink>
                 <CNavLink className="home-header-options-item" to={"/comercio"}>Comercio</CNavLink>
                 <CNavLink className="home-header-options-item" to={"/planes"}>Planes</CNavLink>
-                <CNavLink className="home-header-options-cta" to={"/envio"}>Hacer un envío</CNavLink>
+                <CNavLink className="home-header-options-cta" to={"/login"}>Hacer un envío</CNavLink>
                 <CNavLink className="home-header-options-account"  to={"/login"}>
                     <FontAwesomeIcon 
                     icon={faUserCircle}  
