@@ -955,6 +955,196 @@ body .c-body .creacion-pedido-card .card-input {
   border: 0px;
 }
 
+body .c-body .creacion-pedido-card .card-body .switch {
+  position: relative;
+  display: inline-block;
+  width: 90px;
+  height: 34px;
+}
+
+body .c-body .creacion-pedido-card .card-body .switch input {
+  display: none;
+}
+
+body .c-body .creacion-pedido-card .card-body .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f3bd01;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+body .c-body .creacion-pedido-card .card-body .slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+body .c-body .creacion-pedido-card .card-body input:checked + .slider {
+  background-color: #cdde0c;
+}
+
+body .c-body .creacion-pedido-card .card-body input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+body .c-body .creacion-pedido-card .card-body input:checked + .slider:before {
+  -webkit-transform: translateX(55px);
+  -ms-transform: translateX(55px);
+  transform: translateX(55px);
+}
+
+/*------ ADDED CSS ---------*/
+
+body .c-body .creacion-pedido-card .card-body .on {
+  display: none;
+  font-family: "Poppins", sans-serif;
+}
+
+body .c-body .creacion-pedido-card .card-body .on,
+.off {
+  font-family: "Poppins", sans-serif;
+  color: #153b75;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+body .c-body .creacion-pedido-card .card-body input:checked + .slider .on {
+  display: block;
+  font-family: "Poppins", sans-serif;
+}
+
+body .c-body .creacion-pedido-card .card-body input:checked + .slider .off {
+  display: none;
+  font-family: "Poppins", sans-serif;
+}
+
+/*--------- END --------*/
+
+/* Rounded sliders */
+
+body .c-body .creacion-pedido-card .card-body .slider.round {
+  border-radius: 34px;
+}
+
+body .c-body .creacion-pedido-card .card-body .slider.round:before {
+  border-radius: 50%;
+}
+
+/* SWITH TOGGLE BUTTON START------- */
+body .c-body .creacion-pedido-button-envio .switch {
+  position: relative;
+  display: inline-block;
+  width: 170px;
+  height: 34px;
+  font-size: 1.1rem;
+}
+
+body .c-body .creacion-pedido-button-envio .switch input {
+  display: none;
+}
+
+body .c-body .creacion-pedido-button-envio .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f3bd01;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+body .c-body .creacion-pedido-button-envio .slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+body .c-body .creacion-pedido-button-envio input:checked + .slider {
+  background-color: #cdde0c;
+}
+
+body .c-body .creacion-pedido-button-envio input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+body .c-body .creacion-pedido-button-envio input:checked + .slider:before {
+  -webkit-transform: translateX(135px);
+  -ms-transform: translateX(135px);
+  transform: translateX(135px);
+}
+
+/*------ ADDED CSS ---------*/
+
+body .c-body .creacion-pedido-button-envio .on {
+  display: none;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+body .c-body .creacion-pedido-button-envio .on,
+.off {
+  font-family: "Poppins", sans-serif;
+  color: #153b75;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+body .c-body .creacion-pedido-button-envio input:checked + .slider .on {
+  display: block;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+body .c-body .creacion-pedido-button-envio input:checked + .slider .off {
+  display: none;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/*--------- END --------*/
+
+/* Rounded sliders */
+
+body .c-body .creacion-pedido-button-envio .slider.round {
+  border-radius: 34px;
+}
+
+body .c-body .creacion-pedido-button-envio .slider.round:before {
+  border-radius: 50%;
+}
+
+/* SWITH TOGGLE BUTTON END------- */
+
 body .c-body .creacion-pedido-card .card-body .form-group {
   margin-bottom: 0.5rem;
 }
@@ -1389,4 +1579,13 @@ body .login-container .login-row .card-container-right .img-card-info {
   body .login-container .login-row .text-center .btn-link {
     font-size: 0.5rem;
   }
+}
+
+/* Dis  */
+
+.card-values-conecta {
+  color: #153b75;
+  font-size: 1.1rem;
+  text-align: right;
+  font-weight: 500;
 }

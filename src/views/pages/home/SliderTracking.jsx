@@ -25,6 +25,7 @@ import {
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
   import { faSearch } from '@fortawesome/free-solid-svg-icons'
   import { ToastProvider, useToasts } from 'react-toast-notifications';
+  import axios from 'axios'
 
 function SliderTracking(props) {
     const [form, setForm] = useState({
@@ -129,21 +130,63 @@ function SliderTracking(props) {
             }
         }
 
+        let object_send = {
+            nombre: form.name,
+            correo: form.email,
+            producto: form.product,
+            telefono: form.phone,
+            mensaje: form.message
+        }
+
         if(!error){
-            addToast(`Pronto nos comunicaremos contigo`, { 
-                appearance: 'success', 
-                autoDismiss : true ,
-                autoDismissTimeout : 4000
-            });
-            setTimeout(function(){ 
-                setForm({
-                    name: "",
-                    email: "",
-                    product: "",
-                    phone: "",
-                    message: ""
-                });
-            }, 1000);
+            axios({
+                method: 'post',
+                url: 'https://ws.conectaguate.com/api/v1/contacto/new',
+                data: object_send,
+                headers: {"Access-Control-Allow-Origin": "*"}
+              }).then(
+                (result) => {
+                  console.log(result);
+                    addToast(`Pronto nos comunicaremos contigo`, { 
+                        appearance: 'success', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    setTimeout(function(){ 
+                        setForm({
+                            name: "",
+                            email: "",
+                            product: "",
+                            phone: "",
+                            message: ""
+                        });
+                    }, 1000);
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                  if (error.response) {
+                    console.log(error.response);
+                    addToast(`Hubo un error intentelo mas tarde`, { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    setTimeout(function(){ 
+                        setForm({
+                            name: "",
+                            email: "",
+                            product: "",
+                            phone: "",
+                            message: ""
+                        });
+                    }, 1000);
+                  }
+                }
+              );
+
+
         }
     }
 

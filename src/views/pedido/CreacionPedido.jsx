@@ -25,9 +25,25 @@ const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown.js'))
 const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 
 
+
 const CreacionPedido = () => {
+    const { addToast } = useToasts();
     const [step, setStep] = useState(0);
-    const [data, setData] = useState({});
+    const [data, setData] = useState({
+        remitente: "",
+        nombre_empresa_remitente: "",
+        telefono_remitente: "",
+        correo_remitente: "",
+        municipio_remitente: "",
+        direccion_remitente: "",
+        destinatario: "",
+        name_destinatario: "",
+        telefono_destinatario: "",
+        correo_destinatario: "",
+        municipio_destinatario: "",
+        direccion_destinatario: "",
+        referencias_destinatario: ""
+    });
     const [user, setUser] = useState({});
 
 
@@ -41,11 +57,59 @@ const CreacionPedido = () => {
         console.log(data_copy);
         setData(data_copy);
     }
+    
+    const nextStep = (step) =>{
+        let allow = true;
+        if(step === 1 && data.remitente !== 'testmode'){
+            let labels = {
+                remitente: "¿Quién envia?",
+                telefono_remitente: "Teléfono (Remitente)",
+                correo_remitente: "Correo Electronico (Remitente)",
+                municipio_remitente: "Municipio (Remitente)",
+                direccion_remitente: "Direccion (Remitente)",
+                destinatario: "Destinatario",
+                name_destinatario: "¿Quién recibe?",
+                telefono_destinatario: "Teléfono (Destinatario)",
+                correo_destinatario: "Correo Electronico (Destinatario)",
+                municipio_destinatario: "Municipio (Destinatario)",
+                direccion_destinatario: "Dirección (Destinatario)",
+            };
+          
+            for (const [key, value] of Object.entries(data)) {
+                if(key in labels && value.length === 0){
+                    addToast(`El campo ${labels[key]} es requerido`, { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    allow = false;
+                }
+
+                const em = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if(key === 'correo_remitente' || key === 'correo_destinatario'){
+                    if(!em.test(String(value).toLowerCase())){
+                        addToast(`El ${labels[key]} no es valido`, { 
+                            appearance: 'error', 
+                            autoDismiss : true ,
+                            autoDismissTimeout : 4000
+                        });
+                        allow = false;
+                    }
+                }
+            }
+        }
+
+        if(data.remitente === 'testmode'){
+            allow = true;
+        }
+
+        return allow;
+    }
 
   return (
     <div className="creacion-pedido">
         {(step === 0) ? 
-        <Step1 changeStep={setStep} handleChange={handleChange} user={user} />
+        <Step1 changeStep={setStep} data={data} handleChange={handleChange} user={user} checkNextStep={nextStep} />
          : 
          (step === 1) ? <Step2 changeStep={setStep} />
          :  
@@ -91,7 +155,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">¿Quién envia?</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="origin" data-end="t" placeholder="" required />
+                                    <CInput value={props.data.remitente} onChange={props.handleChange} className="card-input" id="remitente" data-end="t" placeholder="" required />
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -100,10 +164,10 @@ const Step1 = (props) => {
                         <CCol xs="12">
                             <CFormGroup row>
                                 <CCol xs="12" md="3">
-                                    <CLabel htmlFor="text-input">Nombre de empresa</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                    <CLabel htmlFor="text-input">Nombre de empresa</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="name_company" placeholder="" required />
+                                    <CInput value={props.data.nombre_empresa_remitente} onChange={props.handleChange} className="card-input" id="nombre_empresa_remitente" placeholder="" required />
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -115,7 +179,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">Teléfono</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="phone_number" placeholder="" required />
+                                    <CInput value={props.data.telefono_remitente} onChange={props.handleChange} className="card-input" id="telefono_remitente" placeholder="" required />
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -127,7 +191,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">Correo electrónico</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="email" placeholder="" required />
+                                    <CInput value={props.data.correo_remitente} onChange={props.handleChange} className="card-input" id="correo_remitente" placeholder="" required />
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -139,7 +203,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">Poblado/Municipio</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="municipio" placeholder="" required />
+                                    <CInput value={props.data.municipio_remitente}  onChange={props.handleChange} className="card-input" id="municipio_remitente" placeholder="" required />
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -151,7 +215,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">Dirección</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="address" placeholder="" required />
+                                    <CInput value={props.data.direccion_remitente} onChange={props.handleChange} className="card-input" id="direccion_remitente" placeholder="" required />
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -176,7 +240,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">¿Quién recibe?</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="recibe" data-end="t" placeholder="" required />
+                                    <CInput value={props.data.destinatario} onChange={props.handleChange} className="card-input" id="destinatario" data-end="t" placeholder="" required />
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -185,10 +249,10 @@ const Step1 = (props) => {
                         <CCol xs="12">
                             <CFormGroup row>
                                 <CCol xs="12" md="3">
-                                    <CLabel htmlFor="text-input">Nombre de contacto</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                    <CLabel htmlFor="text-input">Nombre de contacto</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="name_contact" placeholder="" required />
+                                    <CInput  value={props.data.name_destinatario} onChange={props.handleChange} className="card-input" id="name_destinatario" placeholder="" required />
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -200,7 +264,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">Teléfono</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="phone_number_contact" placeholder="" required />
+                                    <CInput value={props.data.telefono_destinatario} onChange={props.handleChange} className="card-input" id="telefono_destinatario" placeholder="" required />
                                 </CCol>   
                             </CFormGroup>
                         </CCol>
@@ -212,7 +276,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">Correo electrónico</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="email_contact" placeholder="" required />
+                                    <CInput value={props.data.correo_destinatario}  onChange={props.handleChange} className="card-input" id="correo_destinatario" placeholder="" required />
                                 </CCol>        
                             </CFormGroup>
                         </CCol>
@@ -224,7 +288,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">Poblado/Municipio</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="municipio_contact" placeholder="" required />
+                                    <CInput value={props.data.municipio_destinatario} onChange={props.handleChange} className="card-input" id="municipio_destinatario" placeholder="" required />
                                 </CCol>   
                             </CFormGroup>
                         </CCol>
@@ -236,7 +300,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">Dirección</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="address_contact" placeholder="" required />
+                                    <CInput  value={props.data.direccion_destinatario} onChange={props.handleChange} className="card-input" id="direccion_destinatario" placeholder="" required />
                                 </CCol>   
                             </CFormGroup>
                         </CCol>
@@ -245,10 +309,10 @@ const Step1 = (props) => {
                         <CCol xs="12">
                             <CFormGroup row>
                                 <CCol xs="12" md="3">
-                                    <CLabel htmlFor="text-input">Referencias de dirección</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                    <CLabel htmlFor="text-input">Referencias de dirección</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput onChange={props.handleChange} className="card-input" id="ref_address_contact" placeholder="" required />
+                                    <CInput value={props.data.referencias_destinatario} onChange={props.handleChange} className="card-input" id="referencias_destinatario" placeholder="" required />
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -259,14 +323,22 @@ const Step1 = (props) => {
 
             <div className="creacion-pedido-button-envio">
                 <CRow>
-                    <CCol sm="3">
+                    <CCol sm="4">
                         <div className="creacion-pedido-button-title">
                             <h4>¿Quién pagará el envío:</h4>
                         </div>
                         
                     </CCol>
                     <CCol sm="3">
-                        <CSwitch className={'mx-1'} variant={'3d'} color={'success'}  size={"lg"} defaultChecked />
+                        <CRow>          
+                            <label className="switch">
+                                <input type="checkbox" id="seguro" />
+                                <div className="slider round">
+                                <span className="on">Remitente</span>
+                                <span className="off">Destinatario</span>
+                                </div>
+                            </label>
+                        </CRow>
                     </CCol>
                 </CRow>
 
@@ -283,7 +355,10 @@ const Step1 = (props) => {
                                 className="btn btn-danger btn-circle btn-xl"
                                 onClick={
                                     ()=>{
-                                        props.changeStep(1);
+                                        if(props.checkNextStep(1)){
+                                            props.changeStep(1);
+                                            document.body.scrollTop = document.documentElement.scrollTop = 0;
+                                        }
                                     }
                                 }
                             > 
@@ -343,9 +418,18 @@ const Step2 = (props) => {
                 <CCard className="creacion-pedido-card" style={{backgroundColor: '#FEFEFE'}}>
                     <CCardBody className="card-body">
                         <CRow>
-                            <CCol sm="8">
+                            <CCol sm="9">
                                 <div className="card-title">
-                                    <h3>¿Es servicio pago contra entrega (COD)?</h3>
+                                    <CRow>
+                                        <h3>¿Es servicio pago contra entrega (COD)?&nbsp;&nbsp;&nbsp;</h3>
+                                        <label className="switch">
+                                            <input type="checkbox" id="cod" />
+                                            <div className="slider round">
+                                            <span className="on">Si</span>
+                                            <span className="off">No</span>
+                                            </div>
+                                        </label>
+                                    </CRow>
                                 </div>
                                 <CFormGroup>
                                     <CInput className="card-input" id="cod" placeholder="monto" style={{backgroundColor: '#F4F5F9'}} required />
@@ -356,9 +440,18 @@ const Step2 = (props) => {
                             </CCol>
                         </CRow>
                         <CRow className="creacion-pedido-seguro-section">
-                            <CCol sm="8">
+                            <CCol sm="9">
                                 <div className="card-title">
-                                    <h3>¿Deseas seguro adicional?</h3>
+                                    <CRow>
+                                        <h3>¿Deseas seguro adicional?&nbsp;&nbsp;&nbsp;</h3>
+                                        <label className="switch">
+                                            <input type="checkbox" id="seguro" />
+                                            <div className="slider round">
+                                            <span className="on">Si</span>
+                                            <span className="off">No</span>
+                                            </div>
+                                        </label>
+                                    </CRow>
                                 </div>
                                 <CFormGroup>
                                     <CInput className="card-input" id="seguro" placeholder="monto a asegurar" style={{backgroundColor: '#F4F5F9'}} required />
@@ -369,26 +462,51 @@ const Step2 = (props) => {
                             </CCol>
                         </CRow>
                         <br/>
+                        <CRow className="ml-2 mr-2" style={{borderBottom: '2px solid #153b75'}}>
+
+                        </CRow>
+                        <br/>
                         <CRow>
                             <CCol sm="5">
                                 <div className="card-title">
                                     <h3>Tengo un cupón</h3>
                                 </div>
-                            </CCol>
-                        </CRow>
-                        <CRow>
-                            <CCol sm="5">
                                 <CFormGroup>
                                     <CInput className="card-input" id="codigo" placeholder="añadir código" style={{backgroundColor: '#F4F5F9'}} required />
                                 </CFormGroup>
                             </CCol>
+                            <CCol sm="7" className="card-values-conecta">
+                               <CRow>
+                                    <CCol sm="8">Total Valor Declarado</CCol>
+                                    <CCol sm="4">-</CCol>
+                               </CRow>
+                               <CRow className="card-values-conecta">
+                                    <CCol sm="8">Seguro Adicional</CCol>
+                                    <CCol sm="4">-</CCol>
+                               </CRow>
+                               <CRow className="card-values-conecta">
+                                    <CCol sm="8">Aplica Cupon</CCol>
+                                    <CCol sm="4">-</CCol>
+                               </CRow>
+                               <CRow className="card-values-conecta">
+                                    <CCol sm="8">Costo de envio</CCol>
+                                    <CCol sm="4">-</CCol>
+                               </CRow>
+                               <CRow className="card-values-conecta">
+                                    <CCol sm="8">Fee por COD</CCol>
+                                    <CCol sm="4">-</CCol>
+                               </CRow>
+                            </CCol>
+                        </CRow>
+                        <CRow>
+
                         </CRow>
                     </CCardBody>
                 </CCard>
 
                 <div className="creacion-pedido-button-envio">
-                    <CRow>
-                        <CCol sm="2">
+                    <CRow className="mb-4">
+                        <CCol sm="4">
                             <button 
                                 type="button" 
                                 className="btn btn-danger btn-circle btn-xl"
@@ -414,9 +532,9 @@ const Step2 = (props) => {
                                 Anterior
                             </label>
                         </CCol>
-                        <CCol sm="8">
+                        <CCol sm="4">
                         </CCol>
-                        <CCol sm="2">
+                        <CCol sm="4">
                             <label className="next">
                                 Siguiente
                             </label>
@@ -703,10 +821,10 @@ const RowPackage = (props) => {
                         </div>
                     </CRow>
                     <CRow>
-                        <CIcon 
+                        {/* <CIcon 
                             style={{color: 'red', width: '1.5rem', height: '1.5rem', fontSize: '1.5rem'}}
                             name="cil-x-circle" 
-                        />
+                        /> */}
                     </CRow>
                 </CCol>
             </CRow>

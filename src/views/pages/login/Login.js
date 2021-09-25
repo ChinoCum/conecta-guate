@@ -31,9 +31,9 @@ const Login = () => {
 
   useEffect(()=>{
     const user = reactLocalStorage.getObject('user');
-    console.log(user);
-    console.log(Object.keys(user));
+
     if(Object.keys(user).length > 0){
+      console.log(user);
       if(user !== 'undefined' && user !== undefined && user !== null){
         console.log('teeeeeeeeest');
         if(user.token.length > 0){
@@ -106,7 +106,6 @@ const Login = () => {
             autoDismissTimeout : 4000
         });
         reactLocalStorage.setObject('user', {
-          'name': login.username,
           'email': login.username,
           'token': result.data.access_token
         });

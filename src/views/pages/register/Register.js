@@ -126,14 +126,12 @@ const Register = () => {
     method: 'post',
     url: 'https://ws.conectaguate.com/api/auth/signup',
     data: object_register,
-    headers: {"Access-Control-Allow-Origin": "*"}
   }).then(
     (result) => {
         axios({
           method: 'post',
           url: 'https://ws.conectaguate.com/api/auth/login',
           data: object_login,
-          headers: {"Access-Control-Allow-Origin": "*"}
         }).then(
           (result) => {
             console.log(result);
