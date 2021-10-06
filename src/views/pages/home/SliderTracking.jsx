@@ -75,7 +75,7 @@ function SliderTracking(props) {
     const searchGuia = async () =>{
         let guia_without_space = guia.trim();
         let guia_existe = await getGuiaInfo(guia_without_space);
-        if(guia_existe){
+        if(guia_existe && guia_without_space.length > 0){
             addToast('Guia Encontrada', { 
                 appearance: 'info', 
                 autoDismiss : true ,
