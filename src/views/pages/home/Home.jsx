@@ -1,21 +1,4 @@
 import React, {Fragment} from 'react'
-import { Link } from 'react-router-dom'
-import {
-  CButton,
-  CCard,
-  CCardBody,
-  CCardGroup,
-  CCol,
-  CContainer,
-  CForm,
-  CInput,
-  CInputGroup,
-  CInputGroupPrepend,
-  CInputGroupText,
-  CRow
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { ToastProvider, useToasts } from 'react-toast-notifications';
 
 import PublicHeader from '../global/PublicHeader'
 import SliderTracking from './SliderTracking'

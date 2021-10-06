@@ -18,6 +18,7 @@ const TheLayout = React.lazy(() => import('./containers/TheLayout'));
 const Register = React.lazy(() => import('./views/pages/register/Register'));
 const Login = React.lazy(() => import('./views/pages/login/Login'));
 const Home = React.lazy(() => import('./views/pages/home/Home'));
+const Tracking = React.lazy(() => import('./views/pages/tracking/Tracking'));
 
 class App extends Component {
 
@@ -34,6 +35,7 @@ class App extends Component {
                 <Route exact path="/login" name="Login" render={props => <Login {...props}/>} />
                 <Route exact path="/register" name="Register" render={props => <Register {...props}/>} />
                 <Route path="/creacion-pedido" name="Creacion de Pedido" render={props => <TheLayout {...props}/>} />
+                <Route path="/tracking/:id" name="Tracking Page" render={props => <Tracking {...props}/>} />
               </Switch>
             </React.Suspense>
         </HashRouter>

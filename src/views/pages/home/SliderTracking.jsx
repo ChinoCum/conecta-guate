@@ -26,6 +26,7 @@ import {
   import { faSearch } from '@fortawesome/free-solid-svg-icons'
   import { ToastProvider, useToasts } from 'react-toast-notifications';
   import axios from 'axios'
+  import { useHistory } from "react-router-dom";
 
 function SliderTracking(props) {
     const [form, setForm] = useState({
@@ -35,6 +36,7 @@ function SliderTracking(props) {
         phone: "",
         message: ""
     });
+    const history = useHistory();
 
 
     const [guia, setGuia] = useState("")
@@ -70,13 +72,18 @@ function SliderTracking(props) {
         setForm(new_form);
     }
 
-    const searchGuia = () =>{
+    const searchGuia = async () =>{
         let guia_without_space = guia.trim();
-        if(guia_without_space.length === 27){
-            addToast(guia_without_space, { 
+        let guia_existe = await getGuiaInfo(guia_without_space);
+        if(guia_existe){
+            addToast('Guia Encontrada', { 
                 appearance: 'info', 
                 autoDismiss : true ,
                 autoDismissTimeout : 3000
+            });
+            history.push({
+                pathname: `/tracking/${guia_without_space}`,
+                state: { id: guia_without_space}
             });
         }else{
             addToast("Guia no valida", { 
@@ -85,6 +92,14 @@ function SliderTracking(props) {
                 autoDismissTimeout : 3000
             });
         }
+    }
+
+    const getGuiaInfo = async (id) =>{
+        const config = {};
+        return await axios.get( `https://ws.conectaguate.com/api/v1/tracking/?clave=${id}`, config,).then(
+            (result) => {
+                return result.data.existe;
+        });
     }
 
     const onSubmit = () =>{

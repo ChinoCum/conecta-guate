@@ -306,6 +306,287 @@ body .home-slider .home-slider-background .title {
   margin-left: 1rem;
 }
 
+/* // MARK: Tracking - SliderTracking Component */
+body .tracking-slider {
+  display: flex;
+}
+
+body .tracking-slider .col-slider {
+  padding: 0 !important;
+  flex: 1; /* additionally, equal width */
+}
+
+body .tracking-slider .tracking-slider-card {
+  margin-bottom: 0rem;
+  height: 100%;
+}
+
+body .tracking-slider .tracking-slider-background {
+  position: relative;
+  background: url("/src/assets/img/tracking/header-tracking.jpg") no-repeat center center;
+  width: 100%;
+  height: 35vh;
+  background-size: cover;
+  margin-bottom: 0rem;
+  padding-bottom: 0rem;
+}
+
+body .tracking-slider .tracking-slider-container {
+  height: 100%;
+  position: relative;
+}
+
+body .tracking-slider .row-tracking {
+  bottom: 0;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  position: absolute;
+}
+
+body .tracking-slider .row-tracking .search-input {
+  margin-bottom: 1rem;
+}
+
+body .tracking-slider .row-tracking .search-input .input-tracker {
+  width: 60%;
+  height: 110%;
+  font-size: 1.3rem;
+}
+
+body .tracking-slider .tracking-slider-background .title {
+  color: white;
+  font-weight: 600;
+  font-size: 2.5rem;
+  margin-left: 1rem;
+}
+
+body .tracking-info{
+  
+}
+
+body .tracking-info .stepper-wrapper {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+body .tracking-info .stepper-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
+body .tracking-info .stepper-item::before {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #ccc;
+  width: 100%;
+  top: 35px;
+  left: -50%;
+  z-index: 2;
+}
+
+body .tracking-info .stepper-item::after {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #ccc;
+  width: 100%;
+  top: 35px;
+  left: 50%;
+  z-index: 2;
+}
+
+body .tracking-info .stepper-item .step-counter {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #ccc;
+  margin-bottom: 6px;
+}
+
+body .tracking-info .stepper-item.active {
+  font-weight: bold;
+}
+
+body .tracking-info .stepper-item.completed .step-counter {
+  background-color: #153b75;
+}
+
+body .tracking-info .stepper-item.completed::after {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #153b75;
+  width: 100%;
+  top: 35px;
+  left: 50%;
+  z-index: 3;
+}
+
+body .tracking-info .stepper-item:first-child::before {
+  content: none;
+}
+body .tracking-info .stepper-item:last-child::after {
+  content: none;
+}
+
+body .tracking-info .title{
+  font-weight: 600;
+  font-size: 2.5rem;
+  color: #153b75 !important;
+}
+
+body .tracking-info .title-related-products{
+  font-weight: 300;
+  font-size: 2.1rem;
+  color: #175295 !important;
+}
+
+body .tracking-info .tracking-info-alert{
+  font-weight: 500;
+  font-size: 1.1rem;  
+  color: #153b75 !important;
+}
+
+body .tracking-info .tracking-card{
+  border: 0px;
+  -webkit-box-shadow: 2px 13px 11px -5px rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 13px 11px -5px rgba(0, 0, 0, 0.15);
+}
+
+body .tracking-info .key-info{
+  font-weight: 600;
+  color: #153b75;
+}
+
+body .tracking-info .value-info{
+  padding-left: 1rem;
+  font-weight: 400;
+  color: #153b75;
+}
+
+body .tracking-info .background-image-card{
+  background: url("/src/assets/img/sliders/back-card.jpg") no-repeat center center;
+  background-color: #cccccc;
+  height: 250px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative; 
+  border-radius: 25px;
+}
+
+body .tracking-info .background-image-card-2{
+  background: url("/src/assets/img/sliders/back-card-2.jpg") no-repeat center center;
+  background-color: #cccccc;
+  height: 250px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative; 
+  border-radius: 25px;
+}
+
+body .tracking-info .background-image-card-3{
+  background: url("/src/assets/img/sliders/back-card-3.jpg") no-repeat center center;
+  background-color: #cccccc;
+  height: 250px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative; 
+  border-radius: 25px;
+}
+
+/* // MARK: Tracking - Media Queries SliderTracking Component */
+@media only screen and (max-width: 600px) and (max-width: 992px) {
+  body .tracking-slider .row-tracking {
+    position: relative;
+  }
+
+  body .tracking-slider .tracking-slider-background .title {
+    margin-left: 0rem;
+    text-align: center;
+  }
+
+  body .tracking-slider .row-tracking .search-input .input-tracker {
+    margin-top: 1rem;
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  body .tracking-info .title-related-products{
+    text-align: center;
+  }
+
+  body .tracking-info .btn-conecta-wa{
+    float: right;
+  }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) and (max-width: 992px) {
+  body .tracking-slider .row-tracking {
+    position: relative;
+  }
+  
+  body .tracking-slider .tracking-slider-background .title {
+    margin-left: 0rem;
+    text-align: center;
+  }
+
+  body .tracking-slider .row-tracking .search-input .input-tracker {
+      margin-top: 1rem;
+      width: 100%;
+      font-size: 1rem;
+  }
+
+  body .tracking-info .title-related-products{
+    text-align: center;
+  }
+
+  body .tracking-info .btn-conecta-wa{
+    float: right;
+  }
+}
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) and (max-width: 992px) {
+  body .tracking-slider .row-tracking {
+    position: relative;
+  }
+  
+  body .tracking-slider .tracking-slider-background .title {
+    margin-left: 0rem;
+    text-align: center;
+  }
+
+  body .tracking-slider .row-tracking .search-input .input-tracker {
+    margin-top: 1rem;
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  body .tracking-info .title-related-products{
+    text-align: center;
+  }
+
+  body .tracking-info .btn-conecta-wa{
+    float: right;
+  }
+}
+
+
+
 /* // MARK: Home - Form Component */
 body .home-slider .col-form {
   padding: 0 !important;
