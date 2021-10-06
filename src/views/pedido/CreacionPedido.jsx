@@ -14,12 +14,18 @@ import {
   CFormGroup,
   CLabel,
   CInput,
-  CSwitch
+  CSwitch,
+  CInputGroupAppend,
+  CInputGroup,
+  CInputGroupText,
+  CContainer,
+  CCollapse
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import {reactLocalStorage} from 'reactjs-localstorage';
 import MainChartExample from '../charts/MainChartExample.js'
 import { ToastProvider, useToasts } from 'react-toast-notifications';
+import { v4 as uuidv4 } from 'uuid';
 
 const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown.js'))
 const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
@@ -29,6 +35,7 @@ const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 const CreacionPedido = () => {
     const { addToast } = useToasts();
     const [step, setStep] = useState(0);
+    const [rows_data, setRowsData] = useState([]);
     const [data, setData] = useState({
         remitente: "",
         nombre_empresa_remitente: "",
@@ -45,6 +52,9 @@ const CreacionPedido = () => {
         referencias_destinatario: ""
     });
     const [user, setUser] = useState({});
+    const [seguro_value, setSeguroValue] = useState(0);
+    const [cupon_value, setCuponValue] = useState(0);
+    const [cod_value, setCodValue] = useState(0);
 
 
     const handleChange = (e) => {
@@ -54,7 +64,6 @@ const CreacionPedido = () => {
             ...data_copy,
             [id]: value 
         }
-        console.log(data_copy);
         setData(data_copy);
     }
     
@@ -109,11 +118,29 @@ const CreacionPedido = () => {
   return (
     <div className="creacion-pedido">
         {(step === 0) ? 
-        <Step1 changeStep={setStep} data={data} handleChange={handleChange} user={user} checkNextStep={nextStep} />
+        <Step1 
+            changeStep={setStep} 
+            data={data} 
+            handleChange={handleChange} 
+            user={user} 
+            checkNextStep={nextStep} 
+        />
          : 
-         (step === 1) ? <Step2 changeStep={setStep} />
+         (step === 1) ? 
+         <Step2 
+            changeStep={setStep} 
+            addToast={addToast} 
+            rows_data={rows_data}
+            setRowsData={setRowsData} 
+            cod={cod_value}
+            cupon={cupon_value}
+            seguro={seguro_value}
+            setCod={setCodValue}
+            setCupon={setCuponValue}
+            setSeguro={setSeguroValue}
+        />
          :  
-         <Step3 changeStep={setStep} />}
+         <Step3 changeStep={setStep} addToast={addToast} />}
     </div>
   )
 }
@@ -322,31 +349,31 @@ const Step1 = (props) => {
             <br/>
 
             <div className="creacion-pedido-button-envio">
-                <CRow>
-                    <CCol sm="4">
-                        <div className="creacion-pedido-button-title">
-                            <h4>¿Quién pagará el envío:</h4>
-                        </div>
-                        
-                    </CCol>
-                    <CCol sm="3">
-                        <CRow>          
-                            <label className="switch">
-                                <input type="checkbox" id="seguro" />
-                                <div className="slider round">
-                                <span className="on">Remitente</span>
-                                <span className="off">Destinatario</span>
+                <CRow className="mb-4">
+                    <CCol>
+                        <CRow>
+                            <CCol sm="5">
+                                <div className="creacion-pedido-button-title">
+                                    <h4>¿Quién pagará el envío:</h4>
                                 </div>
-                            </label>
+                                
+                            </CCol>
+                            <CCol sm="3">
+                                <CRow className="switch-container">          
+                                    <label className="switch">
+                                        <input type="checkbox" id="seguro" />
+                                        <div className="slider round">
+                                        <span className="on">Remitente</span>
+                                        <span className="off">Destinatario</span>
+                                        </div>
+                                    </label>
+                                </CRow>
+                            </CCol>
                         </CRow>
                     </CCol>
-                </CRow>
-
-                <CRow>
-                    <CCol sm="9">
-                    </CCol>
-                    <CCol className="col-md-auto">
-                        <div style={{width: 'auto', display: 'inline-flex', float:'right'}}>
+                    {/* <CCol sm="0"></CCol> */}
+                    <CCol sm="4">
+                        <CRow className="buttons-next">
                             <label className="next">
                                 Siguiente
                             </label>
@@ -367,7 +394,7 @@ const Step1 = (props) => {
                                 name="cil-arrow-right" 
                             />
                             </button>
-                        </div>
+                        </CRow>
                     </CCol>
                 </CRow>
             </div>
@@ -377,7 +404,143 @@ const Step1 = (props) => {
 }
 
 const Step2 = (props) => {
-    const [rows_data, setRowsData] = useState([]);
+    const { addToast } = useToasts();
+    const [seguro, setSeguro] = useState('off');
+    const [cod, setCod] = useState('off');
+    const [cupon_value, setCuponValue] = useState(0);
+    const [total_valor_declarado, setTotalValorDeclarado] = useState(0.00);
+    const [render_rows, setRenderRows] = useState(null);
+    const [rows_jsx, setRowsJSX] = useState(null);
+
+    const handleChange = (e) =>{
+        const {id, value} = e.target;
+        if(id === 'cod'){
+            if(cod === 'on'){
+                setCod('off');
+                props.setCod(0);
+            }else if(cod === 'off'){
+                setCod('on');
+            }
+        }
+        if(id === 'seguro'){
+            if(seguro === 'on'){
+                setSeguro('off');
+                props.setSeguro(0);
+            }else if(seguro === 'off'){
+                setSeguro('on');
+            }
+        }
+
+        let val;
+
+        if(id === 'seguro_input'){
+            if(value === ''){
+                val = '';
+            }else{
+                val = parseFloat(value);
+            }
+            props.setSeguro(val);
+        }
+
+        if(id === 'cod_input'){
+            if(value === ''){
+                val = '';
+            }else{
+                val = parseFloat(value);
+            }
+            props.setCod(val);
+        }
+
+        if(id === 'cupon_input'){
+            props.setCupon(value);
+            if(value.length === 6){
+                let isValid = checkCoupon(value);
+                if(!isValid.valid){
+                    addToast(`Cupon invalido`, { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    setCuponValue(0);
+                    props.setCupon(isValid.value);
+                }else{
+                    addToast(`Cupon Aplicado Exitosamente`, { 
+                        appearance: 'success', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    setCuponValue(isValid.value);
+                    props.setCupon(isValid.value);
+                }
+            }else{
+                setCuponValue(0);
+            }
+        }
+    }
+
+    const checkCoupon = (cupon) =>{
+        let valid = true;
+        let val = 10;
+        if(cupon === 'TEST01'){
+            valid = true;
+            val = 10;
+        }else{
+            valid = false;
+            val = 0;
+        }
+
+        return {
+            valid: valid, 
+            value: val
+        };
+    }
+
+    const nextStep = () =>{
+        if(props.rows_data.length === 0){
+            addToast(`Tiene que añadir un paquete para continuar`, { 
+                appearance: 'error', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            });
+            return false;
+        }
+
+        props.changeStep(2);
+    }
+
+    useEffect(()=>{
+        let value = 0.00;
+        let render = [];
+        console.log("CAMBIO DE DATA", props.rows_data);
+        if(props.rows_data){
+            setRowsJSX([]);
+            if(props.rows_data.length > 0){
+                props.rows_data.forEach((elem, index)=>{
+                    console.log(elem);
+                    value += parseFloat(elem.precio);
+                    render.push(<RowPackageStatic rows={props.rows_data} setRows={props.setRowsData} key={`row-${index}`} data={elem} number={index} />); 
+                })
+                console.log(render);
+                setRenderRows([...render]);
+                setTotalValorDeclarado(value);
+            }else{
+                setTotalValorDeclarado(0);
+            }
+        }
+    }, [props.rows_data])
+
+
+    useEffect(()=>{
+        var rows = [];
+        if(render_rows){
+            if(render_rows.length > 0){
+                for (var i = 0; i < render_rows.length; i++) {
+                    rows.push(render_rows[i]);
+                }
+                setRowsJSX(rows);
+            }
+        }
+    },[render_rows])
 
     return (
         <>
@@ -406,11 +569,10 @@ const Step2 = (props) => {
                                 </div>
                             </CCol>
                         </CRow>
-
-                        {rows_data.map((elem,index)=>{
-                            return <RowPackageStatic key={`row-${index}`} data={elem} />
-                        })}
-                        <RowPackage rows={rows_data} addRow={setRowsData} />
+                        {(Array.isArray(rows_jsx))? (rows_jsx.length > 0) ? <br/> : null : null}
+                        {rows_jsx}
+                        {(Array.isArray(rows_jsx))? (rows_jsx.length > 0) ? <br/> : null : null}
+                        <RowPackage rows={props.rows_data} addRow={props.setRowsData} />
 
                     </CCardBody>
                 </CCard>
@@ -423,7 +585,7 @@ const Step2 = (props) => {
                                     <CRow>
                                         <h3>¿Es servicio pago contra entrega (COD)?&nbsp;&nbsp;&nbsp;</h3>
                                         <label className="switch">
-                                            <input type="checkbox" id="cod" />
+                                            <input type="checkbox" id="cod" value={cod} onChange={handleChange} />
                                             <div className="slider round">
                                             <span className="on">Si</span>
                                             <span className="off">No</span>
@@ -431,8 +593,11 @@ const Step2 = (props) => {
                                         </label>
                                     </CRow>
                                 </div>
-                                <CFormGroup>
-                                    <CInput className="card-input" id="cod" placeholder="monto" style={{backgroundColor: '#F4F5F9'}} required />
+                                <CFormGroup style={{display:(cod === 'off')? 'none':'block'}}>
+                                        <div className="input-box">
+                                            <span className="prefix">Q</span>
+                                            <CInput value={props.cod_value} onChange={handleChange} className="card-input" type="number" id="cod_input" placeholder="monto" style={{backgroundColor: '#F4F5F9'}} required />
+                                        </div>
                                 </CFormGroup>
                                 <div className="card-body-step2">
                                     Al elegir servicio COD, su mercadería es cobrada en el destino. El monto se acreditará en su cuenta bancaria con un recargo del 4% del valor declarado y será descontado del monto a cobrar.
@@ -445,7 +610,7 @@ const Step2 = (props) => {
                                     <CRow>
                                         <h3>¿Deseas seguro adicional?&nbsp;&nbsp;&nbsp;</h3>
                                         <label className="switch">
-                                            <input type="checkbox" id="seguro" />
+                                            <input type="checkbox" id="seguro" value={seguro} onChange={handleChange}/>
                                             <div className="slider round">
                                             <span className="on">Si</span>
                                             <span className="off">No</span>
@@ -453,8 +618,11 @@ const Step2 = (props) => {
                                         </label>
                                     </CRow>
                                 </div>
-                                <CFormGroup>
-                                    <CInput className="card-input" id="seguro" placeholder="monto a asegurar" style={{backgroundColor: '#F4F5F9'}} required />
+                                <CFormGroup style={{display:(seguro === 'off')? 'none':'block'}}>
+                                    <div className="input-box">
+                                        <span className="prefix">Q</span>
+                                        <CInput  type="number" onChange={handleChange} value={props.seguro} className="card-input" id="seguro_input" placeholder="monto a asegurar" style={{backgroundColor: '#F4F5F9'}} required />
+                                    </div>
                                 </CFormGroup>
                                 <div className="card-body-step2">
                                     Toda la mercadería está asegurada por un monto de hasta Q.500.00. Sin embargo puedes optar por asegurarla por un monto mayor con un recargo del 2%.
@@ -472,21 +640,21 @@ const Step2 = (props) => {
                                     <h3>Tengo un cupón</h3>
                                 </div>
                                 <CFormGroup>
-                                    <CInput className="card-input" id="codigo" placeholder="añadir código" style={{backgroundColor: '#F4F5F9'}} required />
+                                    <CInput className="card-input" onChange={handleChange} id="cupon_input" placeholder="añadir código" style={{backgroundColor: '#F4F5F9'}} required />
                                 </CFormGroup>
                             </CCol>
                             <CCol sm="7" className="card-values-conecta">
                                <CRow>
                                     <CCol sm="8">Total Valor Declarado</CCol>
-                                    <CCol sm="4">-</CCol>
+                                    <CCol sm="4">{(total_valor_declarado === 0) ? '-' : `Q ${total_valor_declarado}`}</CCol>
                                </CRow>
                                <CRow className="card-values-conecta">
                                     <CCol sm="8">Seguro Adicional</CCol>
-                                    <CCol sm="4">-</CCol>
+                                    <CCol sm="4">{(props.seguro === 0 || props.seguro === '') ? '-' : `Q ${props.seguro}`}</CCol>
                                </CRow>
                                <CRow className="card-values-conecta">
                                     <CCol sm="8">Aplica Cupon</CCol>
-                                    <CCol sm="4">-</CCol>
+                                    <CCol sm="4">{(cupon_value === 0) ? '-' : `- Q ${cupon_value}`}</CCol>
                                </CRow>
                                <CRow className="card-values-conecta">
                                     <CCol sm="8">Costo de envio</CCol>
@@ -507,51 +675,51 @@ const Step2 = (props) => {
                 <div className="creacion-pedido-button-envio">
                     <CRow className="mb-4">
                         <CCol sm="4">
-                            <button 
-                                type="button" 
-                                className="btn btn-danger btn-circle btn-xl"
-                                style={{ backgroundColor: '#bfc7d8' }}
-                                onClick={
-                                    ()=>{
-                                        props.changeStep(0);
+                            <CRow className="buttons-back">
+                                <button 
+                                    type="button" 
+                                    className="btn btn-danger btn-circle btn-xl"
+                                    style={{ backgroundColor: '#bfc7d8' }}
+                                    onClick={
+                                        ()=>{
+                                            props.changeStep(0);
+                                        }
                                     }
-                                }
-                            > 
-                            <CIcon 
-                                style={{
-                                    color: 'white', 
-                                    width: '2rem', 
-                                    height: '2rem', 
-                                    fontSize: '2rem',
-                                    transform: 'rotate(180deg)'
-                                }}
-                                name="cil-arrow-right" 
-                            />
-                            </button>
-                            <label className="back">
-                                Anterior
-                            </label>
+                                > 
+                                <CIcon 
+                                    style={{
+                                        color: 'white', 
+                                        width: '2rem', 
+                                        height: '2rem', 
+                                        fontSize: '2rem',
+                                        transform: 'rotate(180deg)'
+                                    }}
+                                    name="cil-arrow-right" 
+                                />
+                                </button>
+                                <label className="back">
+                                    Anterior
+                                </label>
+                            </CRow>
                         </CCol>
                         <CCol sm="4">
                         </CCol>
                         <CCol sm="4">
-                            <label className="next">
-                                Siguiente
-                            </label>
-                            <button 
-                                type="button" 
-                                className="btn btn-danger btn-circle btn-xl"
-                                onClick={
-                                    ()=>{
-                                        props.changeStep(2);
-                                    }
-                                }
-                            > 
-                            <CIcon 
-                                style={{color: 'white', width: '2rem', height: '2rem', fontSize: '2rem'}}
-                                name="cil-arrow-right" 
-                            />
-                            </button>
+                            <CRow className="buttons-next">
+                                <label className="next">
+                                    Siguiente
+                                </label>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-danger btn-circle btn-xl"
+                                    onClick={nextStep}
+                                > 
+                                <CIcon 
+                                    style={{color: 'white', width: '2rem', height: '2rem', fontSize: '2rem'}}
+                                    name="cil-arrow-right" 
+                                />
+                                </button>
+                            </CRow>
                         </CCol>
                     </CRow>
                 </div>
@@ -581,9 +749,23 @@ const Step3 = (props) => {
             <CCard className="creacion-pedido-card">
                 <CCardBody className="card-body">
                     <CRow>
-                        <CCol sm="5">
+                        <CCol className sm="5">
                             <div className="card-title">
                                 <h3>Resumen</h3>
+                            </div>
+
+                        </CCol>
+                    </CRow>
+                    <br/>
+                    <CRow>
+                        <CCol sm="5">
+                            <CRow>
+                                <h5>No. de Orden</h5>&nbsp; &nbsp;<h5> 12345678</h5>
+                            </CRow>
+                        </CCol>
+                        <CCol sm="7">
+                            <div className="order-number">
+                                <h5>No. de Orden</h5> <h5></h5>
                             </div>
                         </CCol>
                     </CRow>
@@ -632,74 +814,129 @@ const Step3 = (props) => {
 
 const RowPackageStatic = (props) => {
     const [new_package, setPackage] = useState(props.data);
+    const [accordion, setAccordion] = useState(1)
+    const [collapse, setCollapse] = useState(false)
+
+    const toggle = (e) => {
+        setCollapse(!collapse)
+        e.preventDefault()
+      }
+
+    const deletePackage = (id) =>{
+        console.log(id);
+        let allRows = [...props.rows];
+        
+        // let newRows = allRows.filter(elem => elem.id !== id);
+        // let newRows; 
+
+        for (var i = 0; i < allRows.length; i++) {
+            var obj = allRows[i];
+        
+            if (id === obj.id) {
+                allRows.splice(i, 1);
+                i--;
+            }
+        }
+
+        console.log(allRows);
+        props.setRows(allRows);
+
+    } 
     
     return(
-        <>          
-            <CRow className="row-package"> 
-                <CCol sm="3">
-                    <CRow>
-                        <div className="card-title-column">
-                            Descripción 
-                        </div>
-                    </CRow>
-                    <CRow>       
-                        <CInput type="text" id="paquete" className="card-input" disabled value={new_package.paquete} placeholder="" style={{background:'white', border: '0px'}}/>
-                    </CRow>
-                </CCol>
-                <CCol sm="2">
-                    <CRow>
-                        <div className="card-title-column">
-                            Tipo de transporte<div className="asterisk">&nbsp;*</div>
-                        </div>
-                    </CRow>
-                    <CRow>
-                        <CInput type="text" id="transporte" className="card-input"  disabled value={new_package.transporte} placeholder="" style={{background:'white', border: '0px'}}/>
-                    </CRow>
-                </CCol>
-                <CCol sm="2">
-                    <CRow>
-                        <div className="card-title-column">
-                            Peso<div className="asterisk">&nbsp;*</div> 
-                        </div>
-                    </CRow>
-                    <CRow>
-                        <CInput type="text" id="peso" className="card-input"  disabled value={new_package.peso} placeholder="" style={{background:'white', border: '0px'}}/>
-                    </CRow>
-                </CCol>
-                <CCol sm="2">
-                    <CRow>
-                        <div className="card-title-column">
-                            Valor declarado<div className="asterisk">&nbsp;*</div> 
-                        </div>
-                    </CRow>
-                    <CRow>
-                        <CInput type="text" id="precio" className="card-input"  disabled value={new_package.precio} placeholder="" style={{background:'white', border: '0px'}}/>
-                    </CRow>
-                </CCol>
-                <CCol sm="2">
-                    <CRow>
-                        <div className="card-title-column">
-                            Fragil<div className="asterisk">&nbsp;*</div> 
-                        </div>
-                    </CRow>
-                    <CRow>
-                        <CSwitch className={'mx-1'} variant={'3d'} color={'success'}  id="fragil"  disabled  defaultChecked />
-                    </CRow>
-                </CCol>
-                <CCol sm="1">
-                    <CRow>
-                        <div className="card-title-column">
-                            &nbsp; 
-                        </div>
-                    </CRow>
-                    <CRow>
-                        <CIcon 
-                            style={{color: 'red', width: '1.5rem', height: '1.5rem', fontSize: '1.5rem'}}
-                            name="cil-x-circle" 
-                        />
-                    </CRow>
-                </CCol>
-            </CRow>
+        <>   
+            <CCard className="mb-0">
+                <CCardHeader id="headingOne">
+                  <CButton 
+                    block 
+                    className="text-left m-0 p-0" 
+                    onClick={() => setAccordion(accordion === 0 ? null : 0)}
+                    style={{ color: '#153b75', fontWeight: '600'}}
+                  >
+                    <h5 className="m-0 p-0" style={{ color: '#153b75', fontWeight: '600'}}>Paquete # {props.number+1}</h5>
+                  </CButton>
+                </CCardHeader>
+                <CCardBody style={{display:(accordion === 0) ? 'block': 'none', paddingTop: '0'}}>
+                    <CCollapse show={accordion === 0}>       
+                        <CRow className="row-package"> 
+                                <CCol sm="3">
+                                    <CRow>
+                                        <div className="card-title-column">
+                                            Descripción 
+                                        </div>
+                                    </CRow>
+                                    <CRow>       
+                                        <CInput type="text" id="paquete" className="card-input" disabled value={new_package.paquete} placeholder="" style={{background:'white', border: '0px'}}/>
+                                    </CRow>
+                                </CCol>
+                                <CCol sm="2">
+                                    <CRow>
+                                        <div className="card-title-column">
+                                            Tipo de transporte<div className="asterisk">&nbsp;*</div>
+                                        </div>
+                                    </CRow>
+                                    <CRow>
+                                        <CInput type="text" id="transporte" className="card-input"  disabled value={new_package.transporte} placeholder="" style={{background:'white', border: '0px'}}/>
+                                    </CRow>
+                                </CCol>
+                                <CCol sm="2">
+                                    <CRow>
+                                        <div className="card-title-column">
+                                            Peso<div className="asterisk">&nbsp;*</div> 
+                                        </div>
+                                    </CRow>
+                                    <CRow>
+                                        <CInput type="text" id="peso" className="card-input"  disabled value={new_package.peso} placeholder="" style={{background:'white', border: '0px'}}/>
+                                    </CRow>
+                                </CCol>
+                                <CCol sm="2">
+                                    <CRow>
+                                        <div className="card-title-column">
+                                            Valor declarado<div className="asterisk">&nbsp;*</div> 
+                                        </div>
+                                    </CRow>
+                                    <CRow>
+                                        <CInput type="text" id="precio" className="card-input"  disabled value={new_package.precio} placeholder="" style={{background:'white', border: '0px'}}/>
+                                    </CRow>
+                                </CCol>
+                                <CCol sm="2">
+                                    <CRow>
+                                        <div className="card-title-column">
+                                            Fragil<div className="asterisk">&nbsp;*</div> 
+                                        </div>
+                                    </CRow>
+                                    <CRow className="slider-fragil">
+                                        <CSwitch 
+                                        className={'mx-1'} 
+                                        variant={'3d'} 
+                                        color={'success'}  
+                                        id="fragil" 
+                                        checked={(new_package.fragil === 'on')?true: false}
+                                        value={new_package.fragil} 
+                                        disabled   />
+                                    </CRow>
+                                </CCol>
+                                <CCol sm="1">
+                                    <CRow>
+                                        <div className="card-title-column">
+                                            &nbsp; 
+                                        </div>
+                                    </CRow>
+                                    <CRow className="slider-fragil" onClick={()=>{
+                                                deletePackage(props.data.id)
+                                            }}
+                                        style={{cursor:'pointer', width:'fit-content'}}
+                                        >
+                                        <CIcon 
+                                            style={{color: 'red', width: '1.5rem', height: '1.5rem', fontSize: '1.5rem',cursor:'pointer'}}
+                                            name="cil-x-circle" 
+                                        />
+                                    </CRow>
+                                </CCol>
+                            </CRow>
+                    </CCollapse>
+                </CCardBody>
+            </CCard>
         </>
     ) 
 }
@@ -707,12 +944,14 @@ const RowPackageStatic = (props) => {
 
 const RowPackage = (props) => {
     const { addToast } = useToasts();
+    const [ check, setCheck ] = useState(false);
     const [new_package, setPackage] = useState({
         paquete: '',
         transporte: '',
         peso: '',
         precio: '',
-        fragil: 'on'
+        fragil: 'off',
+        id: ''
     });
     
     const handleChange = (e) => {
@@ -722,8 +961,25 @@ const RowPackage = (props) => {
             ...form_object,
             [id]: value
         };
-        console.log(new_data);
         setPackage(new_data);
+    }
+
+    const clickSwitch = () =>{
+        let value_switch;
+        if(check){
+            value_switch = false;
+            setCheck(false);
+        }else{
+            value_switch = true;
+            setCheck(true);
+        }
+        const form_object = JSON.parse(JSON.stringify(new_package));
+        let new_data = {
+            ...form_object,
+            fragil: (value_switch) ? 'on' : 'off'
+        };
+        setPackage(new_data);
+
     }
 
     const submitRow = () =>{
@@ -732,11 +988,12 @@ const RowPackage = (props) => {
             paquete: 'Paquete',
             transporte: 'Transporte',
             peso: 'Peso',
-            precio: 'Precio'
+            precio: 'Precio',
+            id: 'id'
         }
         let error = false;
         for (const [key, value] of Object.entries(new_package)) {
-            if(value.length === 0){
+            if(value.length === 0 && key !== 'id'){
                 addToast(`El campo ${labels[key]} es requerido`, { 
                     appearance: 'error', 
                     autoDismiss : true ,
@@ -745,11 +1002,29 @@ const RowPackage = (props) => {
                 error = true;
             }
         }
+        if(error){
+            return false;
+        }
+
+        if(parseInt(new_package.peso) > 25 && new_package.transporte === 'Moto'){
+            addToast(`El tipo de transporte elegido no es ideal para 
+                      transportar su producto, puede tener algún recargo 
+                      o problema al momento de la recolecta`, { 
+                appearance: 'warning', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            }); 
+            // error = true;
+        }
 
         if(error){
             return false;
         }
-        clone_objects.push(new_package);
+        let paquete_con_id = JSON.parse(JSON.stringify(new_package));
+        const new_id =  uuidv4();
+        paquete_con_id.id = new_id;
+
+        clone_objects.push(paquete_con_id);
         props.addRow(clone_objects);
         console.log(clone_objects);
         setPackage({
@@ -757,9 +1032,10 @@ const RowPackage = (props) => {
             transporte: '',
             peso: '',
             precio: '',
-            fragil: 'on'
-        })
-
+            fragil: 'off',
+            id: ''
+        });
+        setCheck(false);
     }
     return(
         <>          
@@ -771,7 +1047,15 @@ const RowPackage = (props) => {
                         </div>
                     </CRow>
                     <CRow>       
-                        <CInput type="text" id="paquete" className="card-input" onChange={handleChange} value={new_package.paquete} placeholder="" style={{background:'white', border: '0px'}}/>
+                        <CInput 
+                            type="text" 
+                            id="paquete" 
+                            className="card-input" 
+                            onChange={handleChange} 
+                            value={new_package.paquete} 
+                            placeholder="Un paquete con" 
+                            style={{background:'white', border: '0px'}}
+                        />
                     </CRow>
                 </CCol>
                 <CCol sm="2">
@@ -781,7 +1065,18 @@ const RowPackage = (props) => {
                         </div>
                     </CRow>
                     <CRow>
-                        <CInput type="text" id="transporte" className="card-input"  onChange={handleChange} value={new_package.transporte} placeholder="" style={{background:'white', border: '0px'}}/>
+                        <select 
+                            id="transporte" 
+                            className="card-input" 
+                            onChange={handleChange} 
+                            value={new_package.transporte} 
+                            placeholder="" 
+                            style={{background:'white', border: '0px', color: '#768192'}} 
+                        >
+                            <option value="">Tipo</option>
+                            <option value="Moto">Moto</option>
+                            <option value="Panel">Panel</option>
+                        </select>
                     </CRow>
                 </CCol>
                 <CCol sm="2">
@@ -791,7 +1086,21 @@ const RowPackage = (props) => {
                         </div>
                     </CRow>
                     <CRow>
-                        <CInput type="text" id="peso" className="card-input"  onChange={handleChange} value={new_package.peso} placeholder="" style={{background:'white', border: '0px'}}/>
+                        <div className="input-box">
+                            <CInput 
+                                type="number" 
+                                id="peso" 
+                                className="card-input" 
+                                onChange={handleChange} 
+                                value={new_package.peso} 
+                                placeholder="" 
+                                style={{
+                                    background:'white', 
+                                    border: '0px',
+                                }}
+                            />
+                            <span className="prefix">Lbs</span>
+                        </div>
                     </CRow>
                 </CCol>
                 <CCol sm="2">
@@ -801,7 +1110,19 @@ const RowPackage = (props) => {
                         </div>
                     </CRow>
                     <CRow>
-                        <CInput type="text" id="precio" className="card-input"  onChange={handleChange} value={new_package.precio} placeholder="" style={{background:'white', border: '0px'}}/>
+                        <div className="input-box">
+                            <span className="prefix">Q</span>
+                            <CInput 
+                                type="number" 
+                                id="precio" 
+                                className="card-input" 
+                                onChange={handleChange} 
+                                value={new_package.precio} 
+                                placeholder="" 
+                                style={{background:'white', border: '0px'}}
+                            />
+                        </div>
+                        
                     </CRow>
                 </CCol>
                 <CCol sm="2">
@@ -811,7 +1132,14 @@ const RowPackage = (props) => {
                         </div>
                     </CRow>
                     <CRow>
-                        <CSwitch className={'mx-1'} variant={'3d'} color={'success'}  id="fragil"  onChange={handleChange}  defaultChecked />
+                        <CSwitch 
+                        onChange={clickSwitch} 
+                        className={'mx-1'} 
+                        variant={'3d'} 
+                        color={'success'}  
+                        id="fragil"    
+                        checked={check}
+                        />
                     </CRow>
                 </CCol>
                 <CCol sm="1">

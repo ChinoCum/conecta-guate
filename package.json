@@ -36,7 +36,7 @@
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.0",
     "axios": "^0.21.4",
     "classnames": "^2.2.6",
-    "core-js": "^3.9.1",
+    "core-js": "^3.18.1",
     "enzyme": "^3.11.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
@@ -47,11 +47,13 @@
     "react-toast-notifications": "^2.5.1",
     "reactjs-localstorage": "^1.0.1",
     "redux": "^4.0.5",
-    "sass": "^1.32.8"
+    "sass": "^1.32.8",
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.13.14",
     "auto-changelog": "~2.2.1",
+    "babel-core": "^6.26.3",
     "react-scripts": "^4.0.3"
   },
   "scripts": {

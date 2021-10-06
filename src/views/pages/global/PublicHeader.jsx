@@ -1,4 +1,5 @@
-import React, {Fragment, useState, useEffect, useHistory} from 'react'
+import React, {Fragment, useState, useEffect} from 'react'
+import { useHistory } from "react-router-dom";
 import PropTypes from 'prop-types'
 import {
     CButton,
@@ -35,7 +36,7 @@ import {
 
 function PublicHeader(props) {
     const [isOpen, setIsOpen] = useState(false);
-  
+    const history = useHistory();
 
     return (
       <div>
@@ -45,7 +46,9 @@ function PublicHeader(props) {
               backgroundColor: '#153b75'
             }}
             inNavbar onClick={() => setIsOpen(!isOpen)}/>
-          <CNavbarBrand>
+          <CNavbarBrand onClick={()=>{
+            history.push('/');
+          }}>
               <CImg 
                 src={"img/logo_conecta.png"}
                 fluid
@@ -61,7 +64,7 @@ function PublicHeader(props) {
                 <CNavLink className="home-header-options-item" to={"/comercio"}>Comercio</CNavLink>
                 <CNavLink className="home-header-options-item" to={"/planes"}>Planes</CNavLink>
                 <CNavLink className="home-header-options-cta" to={"/login"}>Hacer un envío</CNavLink>
-                <CNavLink className="home-header-options-account"  to={"/login"}>
+                <CNavLink className="home-header-options-account"  to={"/register"}>
                     <FontAwesomeIcon 
                     icon={faUserCircle}  
                     style={{marginRight:'.3rem'}} 
