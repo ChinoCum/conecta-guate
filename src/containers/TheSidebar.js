@@ -60,14 +60,14 @@ const TheSidebar = () => {
       }}
       >
         <img
-          src={"img/logo.png"}
+          src={"img/logo_conecta.png"}
           alt=""
           width="175"
           className="c-sidebar-brand-full"
           name="logo-negative"
         />
         <img
-          src={"img/logo.png"}
+          src={"img/logo_conecta.png"}
           alt=""
           width="175"
           className="c-sidebar-brand-minimized"

@@ -1761,6 +1761,142 @@ html body .creacion-pedido-button-envio .buttons-back{
 
 /* //MARK: Step 3 - Creacion de Pedido */
 
+body .c-body .creacion-pedido-step3{
+  color:#153b75;
+}
+
+body .c-body .creacion-pedido-step3 .data-info-client {
+  margin-left: .1rem;
+}
+
+body .c-body .creacion-pedido-step3 .data-info-client-header {
+  margin-left: .1rem;
+}
+
+body .c-body .creacion-pedido-step3 .data-info-client p{
+  color: black;
+  font-size: .9rem;
+  margin-bottom: .2rem;
+}
+
+body .c-body .creacion-pedido-step3 .text-left-number-order-key{
+  color:#153b75;
+  font-weight: 500;
+}
+
+body .c-body .creacion-pedido-step3 .text-left-number-order-value{
+  color:#153b75;
+  font-weight: 200;
+}
+
+
+body .c-body .creacion-pedido-step3 .paquetes-number{
+  display: inline-flex;
+  float: right;
+}
+
+
+body .c-body .creacion-pedido-step3 .separate-row{
+  border-bottom: 1px solid #153b75;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body .c-body .creacion-pedido-step3 .data-info-client-price{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body .c-body .creacion-pedido-step3 .data-info-client-price .price-underline{
+  text-decoration: underline;
+}
+
+body .c-body .creacion-pedido-step3 .data-info-client-price .price-label{
+  font-size: 1.4rem;
+  font-weight: 200;
+  color: black;
+}
+
+body .c-body .creacion-pedido-step3 .data-info-client-price .price{
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: black;
+}
+
+body .c-body .creacion-pedido-step3 .data-info-client-price .text-price{
+  color: black;
+}
+
+body .c-body .creacion-pedido-step3 .pills-pago{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body .c-body .creacion-pedido-step3 .pills-pago .switch-container{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body .c-body .creacion-pedido-step3 .pills-pago .switch-container p{
+  margin-right: 1rem;
+  font-size: 1rem;
+  color: #153b75;
+  font-weight: 400;
+  margin-top: 4px;
+}
+
+body .c-body .creacion-pedido-step3 .data-info-client-conecta{
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
+body .c-body .creacion-pedido-step3 .data-info-client-conecta .info{
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+  margin-bottom: .2rem;
+  font-size: 1rem;
+  color: grey;
+}
+
+/* // MARK: Step 3 - Media Queries */
+@media only screen and (max-width: 600px) and (max-width: 992px) {
+  body .c-body .creacion-pedido-step3 .data-info-client-conecta{
+    text-align: center;
+  }
+  body .c-body .data-info-client-conecta .button-vaucher{
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) and (max-width: 992px) {
+  body .c-body .creacion-pedido-step3 .data-info-client-conecta{
+    text-align: center;
+  }
+  body .c-body .data-info-client-conecta .button-vaucher{
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+}
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) and (max-width: 992px) {
+  body .c-body .creacion-pedido-step3 .data-info-client-conecta{
+    text-align: center;
+  }
+  body .c-body .data-info-client-conecta .button-vaucher{
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+}
+
+
 /* // MARK: Login Component // */
 
 body .login-container {

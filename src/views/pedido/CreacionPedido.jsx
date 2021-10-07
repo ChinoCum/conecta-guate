@@ -1,4 +1,4 @@
-import React, { lazy, Fragment, useState, useEffect, useHistory} from 'react'
+import React, { lazy, Fragment, useState, useEffect, useRef} from 'react'
 import {
   CBadge,
   CButton,
@@ -26,6 +26,12 @@ import {reactLocalStorage} from 'reactjs-localstorage';
 import MainChartExample from '../charts/MainChartExample.js'
 import { ToastProvider, useToasts } from 'react-toast-notifications';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
+import { 
+    useHistory,
+    useRouteMatch,
+    useParams
+} from "react-router-dom";
 
 const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown.js'))
 const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
@@ -33,6 +39,7 @@ const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 
 
 const CreacionPedido = () => {
+    const history = useHistory();
     const { addToast } = useToasts();
     const [step, setStep] = useState(0);
     const [rows_data, setRowsData] = useState([]);
@@ -56,6 +63,62 @@ const CreacionPedido = () => {
     const [cupon_value, setCuponValue] = useState(0);
     const [cod_value, setCodValue] = useState(0);
 
+
+    useEffect(()=>{
+        const user_object = reactLocalStorage.getObject('user');
+        console.log(user_object);
+        if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+            history.push('/login');
+        }else{
+          if(!('name' in user_object)){
+              console.log(user_object);
+              const config = {
+                  headers: { Authorization: `Bearer ${user_object.token}` }
+              };
+            
+              axios.get(
+                'https://ws.conectaguate.com/api/auth/user',
+                config,
+              ).then(
+                (result) => {
+                  setUser({
+                    ...user_object,
+                    name: result.data.name
+                  });
+                  reactLocalStorage.setObject('user', { 
+                    ...user_object,
+                    name: result.data.name
+                  });
+                  console.log("data user", result);
+                },
+                (error) => {
+                  if (error.response) {
+                    console.log(error.response);
+                  }
+              });
+          }else{
+            setUser({
+              ...user_object
+            });
+          }
+        }
+      },[])
+
+    useEffect(()=>{
+        if(user){
+            if(user.email === 'test010@gmail.com'){
+                let new_data = {
+                    correo_remitente: "chinocum@gmail.com",
+                    direccion_remitente: "2 calle 38-61 zona 11",
+                    municipio_remitente: "Guatemala",
+                    nombre_empresa_remitente: "Test",
+                    remitente: "Diego Cum",
+                    telefono_remitente: "12345678"
+                }
+                setData({...data, ...new_data});
+            }
+        }
+    }, [user])
 
     const handleChange = (e) => {
         const {id, value} = e.target;
@@ -116,6 +179,7 @@ const CreacionPedido = () => {
     }
 
   return (
+      (user)?
     <div className="creacion-pedido">
         {(step === 0) ? 
         <Step1 
@@ -140,8 +204,15 @@ const CreacionPedido = () => {
             setSeguro={setSeguroValue}
         />
          :  
-         <Step3 changeStep={setStep} addToast={addToast} />}
-    </div>
+         <Step3 
+            changeStep={setStep} 
+            data={data} 
+            rows_data={rows_data}
+            handleChange={handleChange} 
+            user={user} 
+            checkNextStep={nextStep} 
+        />}
+    </div>:null
   )
 }
 
@@ -728,6 +799,25 @@ const Step2 = (props) => {
 }
 
 const Step3 = (props) => {
+    const inputFile = useRef(null) 
+    const [valor, setValor] = useState(0); 
+
+    useEffect(()=>{
+        let value = 0.00;
+        if(props.rows_data){
+            if(props.rows_data.length > 0){
+                props.rows_data.forEach((elem, index)=>{
+                    console.log(elem);
+                    value += parseFloat(elem.precio);
+                })
+                setValor(value);
+            }else{
+                setValor(0);
+            }
+        }
+    }, [])
+
+
     return (
         <>
             <div className="creacion-pedido-progress-bar">
@@ -746,10 +836,10 @@ const Step3 = (props) => {
                 </CRow>
             </div>
 
-            <CCard className="creacion-pedido-card">
+            <CCard className="creacion-pedido-card creacion-pedido-step3">
                 <CCardBody className="card-body">
                     <CRow>
-                        <CCol className sm="5">
+                        <CCol sm="5">
                             <div className="card-title">
                                 <h3>Resumen</h3>
                             </div>
@@ -757,53 +847,236 @@ const Step3 = (props) => {
                         </CCol>
                     </CRow>
                     <br/>
-                    <CRow>
+                    <CRow className="data-info-client-header mb-1">
                         <CCol sm="5">
-                            <CRow>
-                                <h5>No. de Orden</h5>&nbsp; &nbsp;<h5> 12345678</h5>
+                            <CRow >
+                                <h5 className="text-left-number-order-key">No. de Orden: </h5>&nbsp; &nbsp;
+                                <h5 className="text-left-number-order-value"> 12345678</h5>
                             </CRow>
                         </CCol>
                         <CCol sm="7">
-                            <div className="order-number">
-                                <h5>No. de Orden</h5> <h5></h5>
+                            <CRow className="paquetes-number mr-2">
+                                <h5 className="text-left-number-order-key">No. de paquetes: &nbsp; &nbsp;</h5> 
+                                <h5 className="text-left-number-order-value">{props.rows_data.length}</h5>
+                            </CRow>
+                        </CCol>
+                    </CRow>
+
+                    <CRow className="data-info-client mb-4">
+                        <CCol sm="12">
+                            <CRow>
+                                <p style={{fontWeight:'600'}}>Envia: &nbsp;</p>
+                                <p style={{fontWeight:'600'}}> {props.data.nombre_empresa_remitente}</p>
+                            </CRow>
+                            <CRow>
+                                <p>Contacto: &nbsp;</p>
+                                <p>{props.data.remitente}</p>
+                            </CRow>
+                            <CRow>
+                                <p>Correo Electronico: &nbsp;</p>
+                                <p>{props.data.correo_remitente}</p>
+                            </CRow>
+                            <CRow>
+                                <p>Telefono: &nbsp;</p>
+                                <p>{props.data.telefono_remitente}</p>
+                            </CRow>
+                            <CRow>
+                                <p>Direccion: &nbsp;</p>
+                                <p>{props.data.direccion_remitente}</p>
+                            </CRow>
+                        </CCol>
+                    </CRow>
+
+                    <CRow className="data-info-client mb-4">
+                        <CCol sm="12">
+                            <CRow>
+                                <p style={{fontWeight:'600'}}>Recibe: &nbsp;</p>
+                                <p style={{fontWeight:'600'}}> {props.data.name_destinatario}</p>
+                            </CRow>
+                            <CRow>
+                                <p>Contacto: &nbsp;</p>
+                                <p>{props.data.destinatario}</p>
+                            </CRow>
+                            <CRow>
+                                <p>Correo Electronico: &nbsp;</p>
+                                <p>{props.data.correo_destinatario}</p>
+                            </CRow>
+                            <CRow>
+                                <p>Telefono: &nbsp;</p>
+                                <p>{props.data.telefono_destinatario}</p>
+                            </CRow>
+                            <CRow>
+                                <p>Direccion: &nbsp;</p>
+                                <p>{props.data.direccion_destinatario}</p>
+                            </CRow>
+                        </CCol>
+                    </CRow>
+
+                    <CRow className="separate-row mb-4"></CRow>
+
+                    <CRow className="data-info-client-price mb-4">
+                        <CCol sm="12">
+                            <CRow className="price-underline">
+                                <p className="price-label" >
+                                    Precio del Servicio: &nbsp;
+                                </p>
+                                <p className="price"> 
+                                    Q. {valor}
+                                </p>
+                            </CRow>
+                        </CCol>
+                        <CCol sm="6">
+                            <CRow className="text-price">
+                                <p>Nuestras entregas en ciudad capital y zonas aledañas es menos de 5 horas bajo cobertura.
+                                <br/>    
+                                <br/>    
+                                Las entregas al interior se realizan entre 24 a 72 horas bajo cobertura.</p>
+                            </CRow>
+                        </CCol>
+                    </CRow>
+
+                    <CRow className="separate-row mb-4"></CRow>
+
+                    <CRow className="mb-3">
+                        <CCol sm="5">
+                            <div className="card-title">
+                                <h3>Cobro del envío</h3>
                             </div>
                         </CCol>
                     </CRow>
+
+                    <CRow className="pills-pago">
+                        <CCol sm="3">
+                            <CRow className="switch-container">          
+                                <p className="text-pago">Efectivo</p>
+                                <label className="switch">
+                                    <input type="checkbox" id="efectivo-pago" />
+                                    <div className="slider round">
+                                    <span className="on">Si</span>
+                                    <span className="off">no</span>
+                                    </div>
+                                </label>
+                            </CRow>
+                        </CCol>
+                        <CCol sm="5">
+                            <CRow className="switch-container">          
+                                <p className="text-pago">Transferencia Bancaria</p>
+                                <label className="switch">
+                                    <input type="checkbox" id="transferencia-pago" />
+                                    <div className="slider round">
+                                    <span className="on">Si</span>
+                                    <span className="off">no</span>
+                                    </div>
+                                </label>
+                            </CRow>
+                        </CCol>
+                        <CCol sm="4">
+                            <CRow className="switch-container">          
+                                <p className="text-pago">Al entregar mi paquete</p>
+                                <label className="switch">
+                                    <input type="checkbox" id="entrega-pago" />
+                                    <div className="slider round">
+                                    <span className="on">Si</span>
+                                    <span className="off">no</span>
+                                    </div>
+                                </label>
+                            </CRow>
+                        </CCol>
+                    </CRow>
+
+                    <CRow className="data-info-client-conecta mb-4">
+                        <CCol sm="6" className="mt-5">
+                            <CRow>
+                                <p className="info" >
+                                    No. de cuenta: &nbsp;
+                                </p>
+                            </CRow>
+                            <CRow>
+                                <p className="info"> 
+                                    903411890
+                                </p>
+                            </CRow>
+                            <CRow>
+                                <p className="info"> 
+                                    BAC - Monetaria
+                                </p>
+                            </CRow>
+                            <CRow>
+                                <p className="info"> 
+                                    AIM Digital de Guatemala S.A.
+                                </p>
+                            </CRow>
+                        </CCol>
+                        <CCol sm="6" className="mt-5 pt-4 button-vaucher">
+                            <CRow>
+                                <CCol sm="3" className="mb-3"></CCol>
+                                <CCol sm="6" xl className="mb-3">
+                                    <CButton 
+                                        block color="secondary" 
+                                        style={{fontSize: '1.2rem'}}
+                                        onClick={() => {
+                                            // `current` points to the mounted file input element
+                                           inputFile.current.click();
+                                        }}
+                                    >Subir voucher</CButton>
+                                </CCol>
+                                <input type='file' id='file' ref={inputFile} style={{display: 'none'}}/>
+                                <CCol sm="3"  className="mb-3"></CCol>
+                            </CRow>
+                        </CCol>
+                    </CRow>
+
                 </CCardBody>
             </CCard>
 
             <div className="creacion-pedido-button-envio">
-                <CRow>
-                    <CCol sm="2">
-                        <button 
-                            type="button" 
-                            className="btn btn-danger btn-circle btn-xl"
-                            style={{ backgroundColor: '#bfc7d8' }}
-                            onClick={
-                                ()=>{
-                                    props.changeStep(1);
+                <CRow className="mb-4">
+                    <CCol sm="4">
+                        <CRow className="buttons-back">
+                            <button 
+                                type="button" 
+                                className="btn btn-danger btn-circle btn-xl"
+                                style={{ backgroundColor: '#bfc7d8' }}
+                                onClick={
+                                    ()=>{
+                                        props.changeStep(1);
+                                    }
                                 }
-                            }
-                        > 
-                        <CIcon 
-                            style={{
-                                color: 'white', 
-                                width: '2rem', 
-                                height: '2rem', 
-                                fontSize: '2rem',
-                                transform: 'rotate(180deg)'
-                            }}
-                            name="cil-arrow-right" 
-                        />
-                        </button>
-                        <label className="back">
-                            Anterior
-                        </label>
+                            > 
+                            <CIcon 
+                                style={{
+                                    color: 'white', 
+                                    width: '2rem', 
+                                    height: '2rem', 
+                                    fontSize: '2rem',
+                                    transform: 'rotate(180deg)'
+                                }}
+                                name="cil-arrow-right" 
+                            />
+                            </button>
+                            <label className="back">
+                                Anterior
+                            </label>
+                        </CRow>
                     </CCol>
-                    <CCol sm="8">
+                    <CCol sm="4">
                     </CCol>
-                    <CCol sm="2">
-                        
+                    <CCol sm="4">
+                        <CRow className="buttons-next">
+                            <label className="next" style={{fontSize:'1.3rem'}}>
+                                Finalizar Orden
+                            </label>
+                            <button 
+                                type="button" 
+                                className="btn btn-danger btn-circle btn-xl"
+                                // onClick={nextStep}
+                            > 
+                            <CIcon 
+                                style={{color: 'white', width: '2rem', height: '2rem', fontSize: '2rem'}}
+                                name="cil-arrow-right" 
+                            />
+                            </button>
+                        </CRow>
                     </CCol>
                 </CRow>
             </div>
