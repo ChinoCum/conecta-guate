@@ -21,12 +21,15 @@ import {
     CAlert
   } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { useToasts } from 'react-toast-notifications';
 
 function TrackingInformation(props) {
     const match = useRouteMatch();
     let { id } = useParams();
     const [info, setInfo] = useState(null)
     const [step_classes, setStepClasses] = useState(null)
+    const { addToast } = useToasts();
+    const history = useHistory();
 
     useEffect(()=>{
         
@@ -44,7 +47,20 @@ function TrackingInformation(props) {
             // almacen
             // transito
             // completada
-            setInfo({...res.pedido})
+            if(!res.existe){
+                addToast('Guia no valida', { 
+                    appearance: 'error', 
+                    autoDismiss : true ,
+                    autoDismissTimeout : 3000
+                });
+                history.push({
+                    pathname: `/`,
+                });
+                return false
+            }else{
+                setInfo({...res.pedido})
+            }
+            
             if(res.pedido.estado_pedido === 'completada'){
                 classes.step1 = "stepper-item completed"
                 classes.step2 = "stepper-item completed"
@@ -111,6 +127,8 @@ function TrackingInformation(props) {
             }
             setStepClasses({...classes})
             console.log("data info", res);
+
+
         },
         (error) => {
             if (error.response) {
@@ -195,7 +213,7 @@ function TrackingInformation(props) {
                                     <CImg
                                         src={`img/icons/tracking/icon-4-${step_classes.step4_img}.svg`}
                                         fluid
-                                        style={{height: (step_classes.step4_img !== 'completed-hold') ? '120px': '80px'}}
+                                        style={{height: (step_classes.step4_img !== 'completed-hold') ? '110px': '80px'}}
                                     />
                                 </div>
                                 <div className="step-name">Entregado</div>
@@ -245,7 +263,14 @@ function TrackingInformation(props) {
                                 <p style={{textAlign: 'right'}}>Si necesitas más infomacion sobre tu paquete</p>
                             </CCol>
                             <CCol>
-                                <CButton style={{backgroundColor:'#94be00'}}className="btn-conecta-wa btn-brand mr-1 mb-1"><span className="mfs-2" style={{color:'white'}}>Click Aqui</span></CButton>
+                                <CButton style={{backgroundColor:'#94be00'}}className="btn-conecta-wa btn-brand mr-1 mb-1">
+                                    <CImg
+                                        src={`img/whatsapp.png`}
+                                        fluid
+                                        style={{height: '20px'}}
+                                    />
+                                    <span className="mfs-2" style={{color:'white'}}>Click Aqui</span>
+                                </CButton>
                             </CCol>
                            
                         </CRow>
