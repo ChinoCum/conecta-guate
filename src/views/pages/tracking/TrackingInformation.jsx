@@ -263,7 +263,12 @@ function TrackingInformation(props) {
                                 <p style={{textAlign: 'right'}}>Si necesitas más infomacion sobre tu paquete</p>
                             </CCol>
                             <CCol>
-                                <CButton style={{backgroundColor:'#94be00'}}className="btn-conecta-wa btn-brand mr-1 mb-1">
+                                <CButton 
+                                href={`https://api.whatsapp.com/send?phone=50244793488&text=Info%2C%20Guia:%2C%20${info.guia}`}
+                                style={{backgroundColor:'#94be00'}}
+                                className="btn-conecta-wa btn-brand mr-1 mb-1"
+                                target="_blank"
+                                >
                                     <CImg
                                         src={`img/whatsapp.png`}
                                         fluid
