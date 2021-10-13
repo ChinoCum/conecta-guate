@@ -99,10 +99,14 @@ const TheHeaderDropdown = () => {
         >
           <strong>Cuenta</strong>
         </CDropdownItem>
-        <CDropdownItem>
+        <CDropdownItem onClick={()=>{
+          history.push('/cuenta/perfil');
+        }}>
           <CIcon name="cil-user" className="mfe-2" />Perfil
         </CDropdownItem>
-        <CDropdownItem>
+        <CDropdownItem onClick={()=>{
+          history.push('/cuenta/password');
+        }}>
           <CIcon name="cil-settings" className="mfe-2" />
           Cambio de Contraseña
         </CDropdownItem>

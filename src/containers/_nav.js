@@ -4,16 +4,21 @@ import CIcon from '@coreui/icons-react'
 const _nav =  [
   {
     _tag: 'CSidebarNavItem',
+    name: 'Nuevo Pedido',
+    to: '/creacion-pedido',
+    icon: 'cil-list',
+  },
+  {
+    _tag: 'CSidebarNavItem',
     name: 'Mis envíos',
-    to: '/envios',
+    to: '/mis-envios',
     icon: 'cil-envelope-closed',
   },
   {
     _tag: 'CSidebarNavItem',
     name: 'Planes disponibles',
-    to: '/planes',
+    to: '/planes-disponibles',
     icon: 'cil-paper-plane',
-
   },
   {
     _tag: 'CSidebarNavDropdown',
@@ -34,7 +39,7 @@ const _nav =  [
       {
         _tag: 'CSidebarNavItem',
         name: '- Cambio de contraseña',
-        to: '/cuenta/pass',
+        to: '/cuenta/password',
       },
       {
         _tag: 'CSidebarNavItem',

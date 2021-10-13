@@ -35,6 +35,13 @@ class App extends Component {
                 <Route exact path="/login" name="Login" render={props => <Login {...props}/>} />
                 <Route exact path="/register" name="Register" render={props => <Register {...props}/>} />
                 <Route path="/creacion-pedido" name="Creacion de Pedido" render={props => <TheLayout {...props}/>} />
+                <Route path="/cuenta/perfil" name="Perfil" render={props => <TheLayout {...props}/>} />
+                <Route path="/cuenta/password" name="Password" render={props => <TheLayout {...props}/>} />
+                <Route path="/cuenta/recibos" name="Recibos" render={props => <TheLayout {...props}/>} />
+                <Route path="/mis-envios" name="Mis Envios" render={props => <TheLayout {...props}/>} />
+                <Route path="/planes-disponibles" name="Planes Disponibles" render={props => <TheLayout {...props}/>} />
+                <Route path="/coberturas" name="Coberturas" render={props => <TheLayout {...props}/>} />
+                <Route path="/recomendaciones" name="Recomendaciones" render={props => <TheLayout {...props}/>} />
                 <Route path="/tracking/:id" name="Tracking Page" render={props => <Tracking {...props}/>} />
               </Switch>
             </React.Suspense>
