@@ -1908,6 +1908,151 @@ body .c-body .creacion-pedido-step3 .data-info-client-conecta .info{
   }
 }
 
+/* //MARK: Step 4 - Creacion de Pedido */
+
+body .c-body .creacion-pedido-step4{
+  color:#153b75;
+}
+
+body .c-body .creacion-pedido-step4 .title {
+  text-align: center;
+}
+
+body .c-body .creacion-pedido-step4 .title-container {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+body .c-body .creacion-pedido-step4 .subtitle-container {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  text-align: center;
+  color: #505154;
+  font-size: 1.1rem;
+}
+
+body .c-body .creacion-pedido-step4 .subtitle-container button{
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: .8rem;
+  padding-bottom: .8rem;
+  width: 25%;
+  background-color: #7979e7;
+  border: #7979e7 1px solid;
+}
+
+body .c-body .creacion-pedido-step4 .subtitle-container-info {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  text-align: center;
+  color: #505154;
+  font-size: 1rem;
+  width: 70%;
+}
+
+body .c-body .creacion-pedido-step4 .link-pedido {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  text-align: center;
+  font-size: 1rem;
+  width: 70%;
+}
+
+body .c-body .creacion-pedido-step4 .recomendaciones-container .title {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 300;
+}
+
+body .c-body .creacion-pedido-step4 .recomendaciones-container li {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1.3rem;
+}
+
+body .c-body .creacion-pedido-step4 .recomendaciones-container .embalaje-hero {
+  margin-left: 30%;
+}
+
+body .c-body .creacion-pedido-step4 .button-again {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  text-align: center;
+  width: 25%;
+}
+
+
+body .c-body .creacion-pedido-step4 .button-again button{
+  font-size: 1.6rem;
+  color: '#153b75';
+  font-weight: 700;
+}
+
+
+/* // MARK: Step 4 - Media Queries */
+@media only screen and (max-width: 600px) and (max-width: 992px) {
+  body .c-body .creacion-pedido-step4 .subtitle-container button{
+    width: 45%;
+  }
+
+  body .c-body .creacion-pedido-step4 .subtitle-container-info {
+    width: 90%;
+  }
+
+  body .c-body .creacion-pedido-step4 .link-pedido {
+    width: 90%;
+  }
+  body .c-body .creacion-pedido-step4 .button-again {
+    width: 85%;
+  }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) and (max-width: 992px) {
+  body .c-body .creacion-pedido-step4 .subtitle-container button{
+    width: 45%;
+  }
+  body .c-body .creacion-pedido-step4 .subtitle-container-info {
+    width: 90%;
+  }
+
+  body .c-body .creacion-pedido-step4 .link-pedido {
+    width: 90%;
+  }
+  body .c-body .creacion-pedido-step4 .button-again {
+    width: 85%;
+  }
+}
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) and (max-width: 992px) {
+  body .c-body .creacion-pedido-step4 .subtitle-container button{
+    width: 45%;
+  }
+
+  body .c-body .creacion-pedido-step4 .subtitle-container-info {
+    width: 90%;
+  }
+
+  body .c-body .creacion-pedido-step4 .link-pedido {
+    width: 90%;
+  }
+  body .c-body .creacion-pedido-step4 .button-again {
+    width: 85%;
+  }
+}
+
 
 /* // MARK: Login Component // */
 

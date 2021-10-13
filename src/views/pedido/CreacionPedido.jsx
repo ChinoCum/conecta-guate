@@ -19,7 +19,8 @@ import {
   CInputGroup,
   CInputGroupText,
   CContainer,
-  CCollapse
+  CCollapse,
+  CImg
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import {reactLocalStorage} from 'reactjs-localstorage';
@@ -41,7 +42,7 @@ const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 const CreacionPedido = () => {
     const history = useHistory();
     const { addToast } = useToasts();
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(3);
     const [rows_data, setRowsData] = useState([]);
     const [data, setData] = useState({
         remitente: "",
@@ -203,7 +204,7 @@ const CreacionPedido = () => {
             setCupon={setCuponValue}
             setSeguro={setSeguroValue}
         />
-         :  
+         :  (step === 2) ? 
          <Step3 
             changeStep={setStep} 
             data={data} 
@@ -211,7 +212,15 @@ const CreacionPedido = () => {
             handleChange={handleChange} 
             user={user} 
             checkNextStep={nextStep} 
-        />}
+        />: 
+        <Step4 
+           changeStep={setStep} 
+           data={data} 
+           rows_data={rows_data}
+           handleChange={handleChange} 
+           user={user} 
+           checkNextStep={nextStep} 
+       />}
     </div>:null
   )
 }
@@ -1083,6 +1092,82 @@ const Step3 = (props) => {
         </>
     )
 }
+
+const Step4 = (props) => {
+    const inputFile = useRef(null) 
+    const [valor, setValor] = useState(0); 
+
+    useEffect(()=>{
+        let value = 0.00;
+        if(props.rows_data){
+            if(props.rows_data.length > 0){
+                props.rows_data.forEach((elem, index)=>{
+                    console.log(elem);
+                    value += parseFloat(elem.precio);
+                })
+                setValor(value);
+            }else{
+                setValor(0);
+            }
+        }
+    }, [])
+
+
+    return (
+        <>
+            <CContainer className="creacion-pedido-step4">
+                <CRow className="title-container">
+                    <h3 className="title">Orden Finalizada</h3>
+                </CRow>
+                <CRow className="subtitle-container">
+                    Favor descarga esta guía y pegala en tu paquete
+                </CRow>
+                <br/>
+                <CRow className="subtitle-container">
+                    <CButton block color="primary"> Descargar guía </CButton>
+                </CRow>
+                <br/>
+                <CRow className="subtitle-container-info">
+                    Puedes compartir el siguiente tracking con tu cliente para manterle informado del estado de su pedido.
+                </CRow>
+                <br/>
+                <CRow className="link-pedido">
+                    <a href="/">33446740-43-42555071720P721</a>
+                </CRow>
+                <br/>
+                <CRow className="recomendaciones-container">
+                    <CCol sm="6">
+                        <p className="title">Recomendaciones de embalaje</p>
+                        <ul>
+                            <li>
+                                Recuerda embalar bien tus productos de preferencia sellados dentro de una caja.
+                            </li>
+                            <li>
+                                Si es frágil, añadele una etiqueta y rellenalo con duroport, esponja o cartón a manera de proteger tu producto.
+                            </li>
+                            <li>
+                                Si envías galones, botellas o frascos, deberás embalarlos dentro de una caja de preferencia envueltos en plástico.
+                            </li>
+                        </ul>
+                    </CCol>
+                    <CCol sm="6">
+                        <CImg
+                            src={"img/hero/embalaje.png"}
+                            className="d-inline-block img-fluid embalaje-hero"
+                            alt="embalaje conecta"
+                        />
+                    </CCol>
+                </CRow>
+                <br/>
+                <CRow className="button-again">
+                    <CButton block style={{backgroundColor:'#e9f114', color: '#153b75'}}>Realizar más envíos</CButton>
+                </CRow>
+                <br/>
+            </CContainer>
+        </>
+    )
+}
+
 
 
 const RowPackageStatic = (props) => {
