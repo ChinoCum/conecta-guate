@@ -152,7 +152,7 @@ const Register = () => {
               password: ""
             })
 
-            history.push('/creacion-pedido');
+            history.push('/perfil');
           },
           // Note: it's important to handle errors here
           // instead of a catch() block so that we don't swallow

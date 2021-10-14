@@ -42,7 +42,7 @@ const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 const CreacionPedido = () => {
     const history = useHistory();
     const { addToast } = useToasts();
-    const [step, setStep] = useState(3);
+    const [step, setStep] = useState(0);
     const [rows_data, setRowsData] = useState([]);
     const [data, setData] = useState({
         remitente: "",
@@ -63,6 +63,11 @@ const CreacionPedido = () => {
     const [seguro_value, setSeguroValue] = useState(0);
     const [cupon_value, setCuponValue] = useState(0);
     const [cod_value, setCodValue] = useState(0);
+    const [cobro, setCobro] = useState({
+        efectivo: false,
+        transferencia: false,
+        contra_entrega: false,
+    });
 
 
     useEffect(()=>{
@@ -211,7 +216,11 @@ const CreacionPedido = () => {
             rows_data={rows_data}
             handleChange={handleChange} 
             user={user} 
-            checkNextStep={nextStep} 
+            checkNextStep={nextStep}
+            cobro={cobro}
+            setCobro={setCobro}
+            cupon={cupon_value}
+            seguro={seguro_value}
         />: 
         <Step4 
            changeStep={setStep} 
@@ -491,6 +500,7 @@ const Step2 = (props) => {
     const [total_valor_declarado, setTotalValorDeclarado] = useState(0.00);
     const [render_rows, setRenderRows] = useState(null);
     const [rows_jsx, setRowsJSX] = useState(null);
+    const [input_value_seguro, setInputValueSeguro] = useState(0.00);
 
     const handleChange = (e) =>{
         const {id, value} = e.target;
@@ -506,20 +516,25 @@ const Step2 = (props) => {
             if(seguro === 'on'){
                 setSeguro('off');
                 props.setSeguro(0);
+                setInputValueSeguro(0);
             }else if(seguro === 'off'){
                 setSeguro('on');
             }
         }
 
         let val;
+        let inputValueSeguro;
 
         if(id === 'seguro_input'){
             if(value === ''){
                 val = '';
+                inputValueSeguro = '';
             }else{
-                val = parseFloat(value);
+                val = parseFloat(value * .02);
+                inputValueSeguro = parseFloat(value);
             }
             props.setSeguro(val);
+            setInputValueSeguro(inputValueSeguro);
         }
 
         if(id === 'cod_input'){
@@ -609,6 +624,19 @@ const Step2 = (props) => {
         }
     }, [props.rows_data])
 
+    useEffect(()=>{
+       if(props.cod !== 0 && props.cod !== ''){
+            setCod('on');
+       }
+       if(props.seguro !== 0 && props.seguro !== ''){
+            setSeguro('on');
+            setInputValueSeguro((props.seguro/.02).toFixed(2))
+       }
+       if(props.cupon !== 0 && props.cupon !== ''){
+            setCuponValue(props.cupon);
+        }
+    }, [])
+
 
     useEffect(()=>{
         var rows = [];
@@ -665,7 +693,7 @@ const Step2 = (props) => {
                                     <CRow>
                                         <h3>¿Es servicio pago contra entrega (COD)?&nbsp;&nbsp;&nbsp;</h3>
                                         <label className="switch">
-                                            <input type="checkbox" id="cod" value={cod} onChange={handleChange} />
+                                            <input type="checkbox" id="cod" value={cod} checked={(cod === 'on' ? true: false)} onChange={handleChange} />
                                             <div className="slider round">
                                             <span className="on">Si</span>
                                             <span className="off">No</span>
@@ -690,7 +718,7 @@ const Step2 = (props) => {
                                     <CRow>
                                         <h3>¿Deseas seguro adicional?&nbsp;&nbsp;&nbsp;</h3>
                                         <label className="switch">
-                                            <input type="checkbox" id="seguro" value={seguro} onChange={handleChange}/>
+                                            <input type="checkbox" id="seguro" value={seguro} checked={(seguro === 'on' ? true: false)} onChange={handleChange}/>
                                             <div className="slider round">
                                             <span className="on">Si</span>
                                             <span className="off">No</span>
@@ -701,7 +729,7 @@ const Step2 = (props) => {
                                 <CFormGroup style={{display:(seguro === 'off')? 'none':'block'}}>
                                     <div className="input-box">
                                         <span className="prefix">Q</span>
-                                        <CInput  type="number" onChange={handleChange} value={props.seguro} className="card-input" id="seguro_input" placeholder="monto a asegurar" style={{backgroundColor: '#F4F5F9'}} required />
+                                        <CInput  type="number" onChange={handleChange} value={input_value_seguro} className="card-input" id="seguro_input" placeholder="monto a asegurar" style={{backgroundColor: '#F4F5F9'}} required />
                                     </div>
                                 </CFormGroup>
                                 <div className="card-body-step2">
@@ -726,15 +754,15 @@ const Step2 = (props) => {
                             <CCol sm="7" className="card-values-conecta">
                                <CRow>
                                     <CCol sm="8">Total Valor Declarado</CCol>
-                                    <CCol sm="4">{(total_valor_declarado === 0) ? '-' : `Q ${total_valor_declarado}`}</CCol>
+                                    <CCol sm="4">{(total_valor_declarado === 0) ? '-' : `Q ${total_valor_declarado.toFixed(2)}`}</CCol>
                                </CRow>
                                <CRow className="card-values-conecta">
                                     <CCol sm="8">Seguro Adicional</CCol>
-                                    <CCol sm="4">{(props.seguro === 0 || props.seguro === '') ? '-' : `Q ${props.seguro}`}</CCol>
+                                    <CCol sm="4">{(props.seguro === 0 || props.seguro === '') ? '-' : `Q ${props.seguro.toFixed(2)}`}</CCol>
                                </CRow>
                                <CRow className="card-values-conecta">
                                     <CCol sm="8">Aplica Cupon</CCol>
-                                    <CCol sm="4">{(cupon_value === 0) ? '-' : `- Q ${cupon_value}`}</CCol>
+                                    <CCol sm="4">{(cupon_value === 0 || cupon_value === '') ? '-' : `- Q ${cupon_value.toFixed(2)}`}</CCol>
                                </CRow>
                                <CRow className="card-values-conecta">
                                     <CCol sm="8">Costo de envio</CCol>
@@ -810,6 +838,85 @@ const Step2 = (props) => {
 const Step3 = (props) => {
     const inputFile = useRef(null) 
     const [valor, setValor] = useState(0); 
+    const { addToast } = useToasts();
+    const [files, setFiles] = useState({});
+
+    const DEFAULT_MAX_FILE_SIZE_IN_BYTES = 500000;
+    const KILO_BYTES_PER_BYTE = 1000;
+
+    const convertBytesToKB = (bytes) =>
+    Math.round(bytes / KILO_BYTES_PER_BYTE);
+
+    const handleNewFileUpload = (e) => {
+        const { files: newFiles } = e.target;
+        if (newFiles.length) {
+          setFiles(newFiles);
+        }
+    };
+
+
+    const handleChange = (e) =>{
+        const {id, value} = e.target;
+        let bool_value;
+        if(value === 'true'){
+            bool_value = false;
+        }else if(value === 'false'){
+            bool_value = true;
+        }else{
+            bool_value = value;
+        }
+        console.log(bool_value);
+
+        switch(id){
+            case 'efectivo-pago':
+                props.setCobro({
+                    transferencia: false,
+                    contra_entrega: false,
+                    efectivo: bool_value
+                })
+                break
+            case 'transferencia-pago':
+                props.setCobro({
+                    efectivo: false,
+                    contra_entrega: false,
+                    transferencia: bool_value
+                })
+                break
+            case 'contra-entrega-pago':
+                props.setCobro({
+                    efectivo: false,
+                    transferencia: false,
+                    contra_entrega: bool_value
+                })
+                break
+
+        }
+    }
+
+    const nextStep = () =>{
+        let pago = props.cobro;
+          console.log(pago);
+        if(!pago.efectivo && !pago.transferencia && !pago.contra_entrega){
+            addToast(`Tiene que añadir un metodo de pago para continuar`, { 
+                appearance: 'error', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            });
+            return false;
+        }
+
+        if( document.getElementById("file").files.length == 0 && (pago.transferencia)){
+            addToast(`Debe adjuntar un archivo`, { 
+                appearance: 'error', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            });
+            return false;
+        }
+
+        return false;
+        props.changeStep(3);
+    }
 
     useEffect(()=>{
         let value = 0.00;
@@ -819,12 +926,26 @@ const Step3 = (props) => {
                     console.log(elem);
                     value += parseFloat(elem.precio);
                 })
-                setValor(value);
+                let seguro = 0;
+                let cupon = 0;
+                if(props.seguro !== '' && props.seguro !== 0){
+                    seguro = parseFloat(props.seguro);
+                }
+                if(props.cupon !== '' && props.cupon !== 0){
+                    cupon = parseFloat(props.cupon);
+                }
+                value = value + seguro;
+                value = value - cupon;
+                setValor(value.toFixed(2));
             }else{
                 setValor(0);
             }
         }
     }, [])
+
+    useEffect(()=>{
+        console.log(inputFile);
+    },[inputFile])
 
 
     return (
@@ -959,7 +1080,7 @@ const Step3 = (props) => {
                             <CRow className="switch-container">          
                                 <p className="text-pago">Efectivo</p>
                                 <label className="switch">
-                                    <input type="checkbox" id="efectivo-pago" />
+                                    <input type="checkbox" onChange={handleChange} checked={props.cobro.efectivo} value={props.cobro.efectivo} id="efectivo-pago"  />
                                     <div className="slider round">
                                     <span className="on">Si</span>
                                     <span className="off">no</span>
@@ -971,7 +1092,7 @@ const Step3 = (props) => {
                             <CRow className="switch-container">          
                                 <p className="text-pago">Transferencia Bancaria</p>
                                 <label className="switch">
-                                    <input type="checkbox" id="transferencia-pago" />
+                                    <input type="checkbox" onChange={handleChange} checked={props.cobro.transferencia} value={props.cobro.transferencia} id="transferencia-pago" />
                                     <div className="slider round">
                                     <span className="on">Si</span>
                                     <span className="off">no</span>
@@ -983,7 +1104,7 @@ const Step3 = (props) => {
                             <CRow className="switch-container">          
                                 <p className="text-pago">Al entregar mi paquete</p>
                                 <label className="switch">
-                                    <input type="checkbox" id="entrega-pago" />
+                                    <input type="checkbox" onChange={handleChange} checked={props.cobro.contra_entrega} value={props.cobro.contra_entrega} id="contra-entrega-pago" />
                                     <div className="slider round">
                                     <span className="on">Si</span>
                                     <span className="off">no</span>
@@ -1020,16 +1141,26 @@ const Step3 = (props) => {
                             <CRow>
                                 <CCol sm="3" className="mb-3"></CCol>
                                 <CCol sm="6" xl className="mb-3">
-                                    <CButton 
+                                    <CRow> <CButton 
                                         block color="secondary" 
                                         style={{fontSize: '1.2rem'}}
                                         onClick={() => {
                                             // `current` points to the mounted file input element
                                            inputFile.current.click();
                                         }}
-                                    >Subir voucher</CButton>
+                                    >Subir voucher</CButton> </CRow>
+                                    <CRow style={{
+                                        display:'block',
+                                        marginLeft:'auto',
+                                        marginRight:'auto',
+                                        textAlign:'center'
+                                    }}>{(inputFile !== null) ?
+                                        (inputFile.current !== null) ? 
+                                            (inputFile.current.files !== undefined) ? 
+                                                (inputFile.current.files[0] !== undefined) ?
+                                                    inputFile.current.files[0].name : '' : '' : '': ''}</CRow>
                                 </CCol>
-                                <input type='file' id='file' ref={inputFile} style={{display: 'none'}}/>
+                                <input onChange={handleNewFileUpload} type='file' id='file' ref={inputFile} style={{display: 'none'}}/>
                                 <CCol sm="3"  className="mb-3"></CCol>
                             </CRow>
                         </CCol>
@@ -1078,7 +1209,7 @@ const Step3 = (props) => {
                             <button 
                                 type="button" 
                                 className="btn btn-danger btn-circle btn-xl"
-                                // onClick={nextStep}
+                                onClick={nextStep}
                             > 
                             <CIcon 
                                 style={{color: 'white', width: '2rem', height: '2rem', fontSize: '2rem'}}
@@ -1160,7 +1291,11 @@ const Step4 = (props) => {
                 </CRow>
                 <br/>
                 <CRow className="button-again">
-                    <CButton block style={{backgroundColor:'#e9f114', color: '#153b75'}}>Realizar más envíos</CButton>
+                    <CButton block style={{backgroundColor:'#e9f114', color: '#153b75'}}
+                        onClick={()=>{
+                            props.changeStep(2);
+                        }}
+                    >Realizar más envíos</CButton>
                 </CRow>
                 <br/>
             </CContainer>
