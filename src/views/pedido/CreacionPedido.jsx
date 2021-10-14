@@ -914,7 +914,6 @@ const Step3 = (props) => {
             return false;
         }
 
-        return false;
         props.changeStep(3);
     }
 
