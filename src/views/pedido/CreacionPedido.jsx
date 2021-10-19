@@ -63,11 +63,27 @@ const CreacionPedido = () => {
     const [seguro_value, setSeguroValue] = useState(0);
     const [cupon_value, setCuponValue] = useState(0);
     const [cod_value, setCodValue] = useState(0);
+    const [costo_de_envio, setCostoDeEnvio] = useState(0);
+    const [total_valor_declarado, setTotalValorDeclarado] = useState(0);
     const [cobro, setCobro] = useState({
         efectivo: false,
         transferencia: false,
         contra_entrega: false,
     });
+    const [payment, setPayment] = useState(false);
+
+    const createOrder = () =>{
+        const order = {};
+        order.informacion_pedido = {... data};
+        order.paquetes = {...rows_data};
+        order.cod = cod_value;
+        order.total_valor_declarado = total_valor_declarado;
+        order.cupon_discount = cupon_value;
+        order.costo_de_envio = costo_de_envio;
+        order.fee_por_cod = cod_value;
+        order.cobro = cobro;
+        console.log(order);
+    }
 
 
     useEffect(()=>{
@@ -194,6 +210,8 @@ const CreacionPedido = () => {
             handleChange={handleChange} 
             user={user} 
             checkNextStep={nextStep} 
+            payment={payment}
+            setPayment={setPayment}
         />
          : 
          (step === 1) ? 
@@ -205,6 +223,7 @@ const CreacionPedido = () => {
             cod={cod_value}
             cupon={cupon_value}
             seguro={seguro_value}
+            setValorDeclarado={setTotalValorDeclarado}
             setCod={setCodValue}
             setCupon={setCuponValue}
             setSeguro={setSeguroValue}
@@ -221,6 +240,7 @@ const CreacionPedido = () => {
             setCobro={setCobro}
             cupon={cupon_value}
             seguro={seguro_value}
+            createOrder={createOrder}
         />: 
         <Step4 
            changeStep={setStep} 
@@ -236,6 +256,26 @@ const CreacionPedido = () => {
 
 
 const Step1 = (props) => {
+    const  [payment, setPayment] = useState(false);
+
+    const handleChange = (e) =>{
+        const {id, value} = e.target;
+        if(id === 'payment'){
+            if(payment){
+                setPayment(false);
+                props.setPayment(false);
+            }else{
+                setPayment(true);
+                props.setPayment(true);
+            }
+        }
+    }
+
+    useEffect(()=>{
+        setPayment(props.payment)
+    },[]);
+
+
     return (
         <>
             <div className="creacion-pedido-progress-bar">
@@ -450,7 +490,7 @@ const Step1 = (props) => {
                             <CCol sm="3">
                                 <CRow className="switch-container">          
                                     <label className="switch">
-                                        <input type="checkbox" id="seguro" />
+                                        <input type="checkbox" id="payment" value={payment} checked={payment} onChange={handleChange} />
                                         <div className="slider round">
                                         <span className="on">Remitente</span>
                                         <span className="off">Destinatario</span>
@@ -501,6 +541,7 @@ const Step2 = (props) => {
     const [render_rows, setRenderRows] = useState(null);
     const [rows_jsx, setRowsJSX] = useState(null);
     const [input_value_seguro, setInputValueSeguro] = useState(0.00);
+    const [input_value_cod,  setInputValorCod] = useState(0.00);
 
     const handleChange = (e) =>{
         const {id, value} = e.target;
@@ -524,6 +565,7 @@ const Step2 = (props) => {
 
         let val;
         let inputValueSeguro;
+        let inputValueCod; 
 
         if(id === 'seguro_input'){
             if(value === ''){
@@ -540,10 +582,13 @@ const Step2 = (props) => {
         if(id === 'cod_input'){
             if(value === ''){
                 val = '';
+                inputValueCod = '';
             }else{
-                val = parseFloat(value);
+                val = parseFloat(value * 0.04)
+                inputValueCod = parseFloat(value);
             }
             props.setCod(val);
+            setInputValorCod(inputValueCod);
         }
 
         if(id === 'cupon_input'){
@@ -618,8 +663,10 @@ const Step2 = (props) => {
                 console.log(render);
                 setRenderRows([...render]);
                 setTotalValorDeclarado(value);
+                props.setValorDeclarado(value);
             }else{
                 setTotalValorDeclarado(0);
+                props.setValorDeclarado(value);
             }
         }
     }, [props.rows_data])
@@ -627,10 +674,11 @@ const Step2 = (props) => {
     useEffect(()=>{
        if(props.cod !== 0 && props.cod !== ''){
             setCod('on');
+            setInputValorCod((props.cod/.04).toFixed(2));
        }
        if(props.seguro !== 0 && props.seguro !== ''){
             setSeguro('on');
-            setInputValueSeguro((props.seguro/.02).toFixed(2))
+            setInputValueSeguro((props.seguro/.02).toFixed(2));
        }
        if(props.cupon !== 0 && props.cupon !== ''){
             setCuponValue(props.cupon);
@@ -704,7 +752,7 @@ const Step2 = (props) => {
                                 <CFormGroup style={{display:(cod === 'off')? 'none':'block'}}>
                                         <div className="input-box">
                                             <span className="prefix">Q</span>
-                                            <CInput value={props.cod_value} onChange={handleChange} className="card-input" type="number" id="cod_input" placeholder="monto" style={{backgroundColor: '#F4F5F9'}} required />
+                                            <CInput value={input_value_cod} onChange={handleChange} className="card-input" type="number" id="cod_input" placeholder="monto" style={{backgroundColor: '#F4F5F9'}} required />
                                         </div>
                                 </CFormGroup>
                                 <div className="card-body-step2">
@@ -770,7 +818,7 @@ const Step2 = (props) => {
                                </CRow>
                                <CRow className="card-values-conecta">
                                     <CCol sm="8">Fee por COD</CCol>
-                                    <CCol sm="4">-</CCol>
+                                    <CCol sm="4">{(props.cod === 0 || props.cod === '') ? '-' : `Q ${props.cod.toFixed(2)}`}</CCol>
                                </CRow>
                             </CCol>
                         </CRow>
@@ -1208,7 +1256,8 @@ const Step3 = (props) => {
                             <button 
                                 type="button" 
                                 className="btn btn-danger btn-circle btn-xl"
-                                onClick={nextStep}
+                                // onClick={nextStep}
+                                onClick={props.createOrder}
                             > 
                             <CIcon 
                                 style={{color: 'white', width: '2rem', height: '2rem', fontSize: '2rem'}}
@@ -1225,7 +1274,8 @@ const Step3 = (props) => {
 
 const Step4 = (props) => {
     const inputFile = useRef(null) 
-    const [valor, setValor] = useState(0); 
+    const [valor, setValor] = useState(0);
+
 
     useEffect(()=>{
         let value = 0.00;
