@@ -34,10 +34,19 @@ import {
   import 'ag-grid-community/dist/styles/ag-grid.css';
   import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
   import 'ag-grid-community/dist/styles/ag-theme-material.css';
-  import CIcon from '@coreui/icons-react'
+  import CIcon from '@coreui/icons-react';
+  import DatePicker from "react-datepicker";
+
+  import "react-datepicker/dist/react-datepicker.css";
+  import ButtonCellRenderer from './cell_renderer/ButtonCellRenderer'
+import { use } from 'react-dom-factories';
 
 
 function MisEnvios(props) {
+    const [aggrid,  setAggrid] = useState(null);
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [input_search, setInputSearch] = useState("");
     const [column_definitions, setColumnDefinitions] = useState({
         columnDefs: [
             { headerName: 'Pedido', field: 'pedido' },
@@ -45,13 +54,22 @@ function MisEnvios(props) {
             { headerName: 'Destino', field: 'destino' },
             { headerName: 'Tipo de envio', field: 'tipo_de_envio' },
             { headerName: 'Estado', field: 'estado' },
-            { haederName: 'button_click',  field: 'button'}
+            { 
+                haederName: 'button_click',  
+                field: 'button',
+                cellRenderer: 'btnCellRenderer',
+                cellRendererParams: {
+                    clicked: function(field) {
+                      alert(`${field} was clicked`);
+                    },
+                  },
+            }
         ],
         // rowData: []
         rowData: [
             { 
                 pedido: '001', 
-                destinatario: 'Nombre Apellido', 
+                destinatario: 'Nombre 1 Apellido', 
                 destino: 'Ciudad',
                 tipo_de_envio: 'Pago contra entrega', 
                 estado: 'En transito', 
@@ -59,7 +77,38 @@ function MisEnvios(props) {
             },
             { 
                 pedido: '002', 
-                destinatario: 'Nombre Apellido', 
+                destinatario: 'Nombre 2 Apellido', 
+                destino: 'Ciudad',
+                tipo_de_envio: 'Pago contra entrega', 
+                estado: 'En transito', 
+                button:'' 
+            },
+            { 
+                pedido: '003', 
+                destinatario: 'Nombre 3 Apellido', 
+                destino: 'Ciudad',
+                tipo_de_envio: 'Pago contra entrega', 
+                estado: 'En transito', 
+                button:'' 
+            },
+            { 
+                pedido: '004', 
+                destinatario: 'Nombre 4 Apellido', 
+                destino: 'Ciudad',
+                tipo_de_envio: 'Pago contra entrega', 
+                estado: 'En transito', 
+                button:'' 
+            },{ 
+                pedido: '005', 
+                destinatario: 'Nombre 5 Apellido', 
+                destino: 'Ciudad',
+                tipo_de_envio: 'Pago contra entrega', 
+                estado: 'En transito', 
+                button:'' 
+            },
+            { 
+                pedido: '006', 
+                destinatario: 'Nombre 6 Apellido', 
                 destino: 'Ciudad',
                 tipo_de_envio: 'Pago contra entrega', 
                 estado: 'En transito', 
@@ -67,6 +116,24 @@ function MisEnvios(props) {
             },
         ]
     });
+
+    const handleChange = (e) =>{
+        const {name, value} = e.target;
+        setInputSearch(value);
+        onFilterTextBoxChanged();
+    }
+
+    const onGridReady = (params) =>{
+        setAggrid({api: params.api, column_api:params.columnApi});
+    }
+
+    const onFilterTextBoxChanged = () => {
+        aggrid.api.setQuickFilter(document.getElementById('guia').value);
+    }
+
+    const onBtnExport = () => {
+        aggrid.api.exportDataAsCsv();
+    };
 
     return (
         <>
@@ -91,9 +158,10 @@ function MisEnvios(props) {
                                 type="text" 
                                 id="guia" 
                                 className="filter-container-input"  
-                                value="test" 
+                                value={input_search}
                                 placeholder="" 
                                 style={{background:'white', border: '0px'}}
+                                onChange={handleChange}
                             />
                         </CRow>
                     </CCol>
@@ -102,21 +170,17 @@ function MisEnvios(props) {
                             Fecha de Inicio
                         </CRow>
                         <CRow>
-                            <CInput 
-                                type="text" 
+                            <DatePicker 
+                                selected={startDate}
                                 id="fecha-ini" 
-                                className="filter-container-input"  
-                                value="test1" 
-                                placeholder="" 
+                                className="filter-container-input form-control"  
+                                onChange={(date) => setStartDate(date)} 
                                 style={{
                                     background:'white', 
                                     border: '0px',
                                     textAlign: 'left'
                                 }}
-                                onChange={()=>{
-                                    console.log('test');
-                                }}
-                            />
+                             />
                         </CRow>
                     </CCol>
                     <CCol sm="3" className="filter-row-responsive">
@@ -124,21 +188,17 @@ function MisEnvios(props) {
                             Fecha de finalización
                         </CRow>
                         <CRow>
-                            <CInput 
-                                type="text" 
+                            <DatePicker 
+                                selected={endDate}
                                 id="fecha-fin" 
-                                className="filter-container-input"  
-                                value="test2" 
-                                placeholder="" 
+                                className="filter-container-input form-control"  
+                                onChange={(date) => setEndDate(date)} 
                                 style={{
                                     background:'white', 
                                     border: '0px',
                                     textAlign: 'left'
                                 }}
-                                onChange={()=>{
-                                    console.log('test');
-                                }}
-                            />
+                             />
                         </CRow>
                     </CCol>
                     <CCol sm="3">
@@ -167,7 +227,9 @@ function MisEnvios(props) {
                                     className="button_filters"
                                     style={{
                                         background:'#afc7ff', 
-                                    }}>
+                                    }}
+                                    onClick={() => onBtnExport()}
+                                    >
                                         Exportar
                                 </CButton>
                             </CCol>
@@ -188,6 +250,10 @@ function MisEnvios(props) {
                             rowSelection="multiple"
                             groupSelectsChildren="true"
                             suppressRowClickSelection="true"
+                            onGridReady={onGridReady}
+                            frameworkComponents={{
+                                btnCellRenderer: ButtonCellRenderer,
+                            }}
                             />
                         </div>
                     </CCol>

@@ -2466,9 +2466,10 @@ body .c-body .mis-envios-container .filter-container {
 
 body .c-body .mis-envios-container .filter-container .filter-container-input{
   margin-top: .5rem;
-  background-color: #f8f8f8;
+  background-color: white;
   text-align: center;
   width: 90%;
+  border: 0px;
   /* color: #dcdcdc; */
 }
 
