@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import CIcon from '@coreui/icons-react';
+import {
+    CImg,
+  } from '@coreui/react'
 
 export default class BtnCellRenderer extends Component {
     constructor(props) {
@@ -11,13 +13,12 @@ export default class BtnCellRenderer extends Component {
     }
     render() {
       return (
-        <CIcon 
+        <CImg
             name="cil-file"
             onClick={this.btnClickedHandler}
-            style={{
-                // background:'white',
-                color:'black' 
-            }}
+            src={`img/icons/mis-envios/guia.svg`}
+            fluid
+            style={{width:'40px', cursor:'pointer'}}
         />
       )
     }

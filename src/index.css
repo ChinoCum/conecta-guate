@@ -2474,17 +2474,30 @@ body .c-body .mis-envios-container .filter-container .filter-container-input{
 }
 
 body .c-body .mis-envios-container .table-container {
-  margin-top: 3em;
+  margin-top: 1.5em;
+}
+
+body .c-body .mis-envios-container .table-container .ag-root {
+  background: #f8f8f8 !important;
 }
 
 body .c-body .mis-envios-container .table-container .ag-header {
   background-color: #567cbd !important;
+  border-radius: 15px;
 }
 
 body .c-body .mis-envios-container .table-container .ag-header-cell-text {
   color: white;
   font-size: 1.1rem;
   font-family: "Poppins", sans-serif;
+}
+
+body .c-body .mis-envios-container .filter-container .row_button_filters{
+  margin-top: .3rem;
+}
+
+body .c-body .mis-envios-container .filter-container .row_button_filters .export_button{
+  text-align: left;
 }
 
 /* // MARK: Dashboard - Mis Envios - Media Queries */
@@ -2513,6 +2526,9 @@ body .c-body .mis-envios-container .table-container .ag-header-cell-text {
     width: 100%;
   }
   
+  body .c-body .mis-envios-container .filter-container .row_button_filters .export_button{
+    text-align: center;
+  }
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
@@ -2533,6 +2549,9 @@ body .c-body .mis-envios-container .table-container .ag-header-cell-text {
     margin-top: 1rem;
   }
 
+  body .c-body .mis-envios-container .filter-container .row_button_filters .export_button{
+    text-align: center;
+  }
 }
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) and (max-width: 992px) {
@@ -2552,6 +2571,9 @@ body .c-body .mis-envios-container .table-container .ag-header-cell-text {
     margin-top: 1rem;
   }
 
+  body .c-body .mis-envios-container .filter-container .row_button_filters .export_button{
+    text-align: center;
+  }
 }
 
 
