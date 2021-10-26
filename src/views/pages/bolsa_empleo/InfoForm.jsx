@@ -49,16 +49,35 @@ function InfoForm(props) {
 
     return (
         <>
-            <CContainer className="mt-5 info-form">
+            <CContainer className="mt-5 info-bolsa-form">
                 <CRow>
                     <CCol>
                         <h2 className="title">
-                            Mensajeria Corporativa
+                            Bolsa de empleo
                         </h2>
                     </CCol>
                 </CRow>
-                <CRow className="mt-5 form">
-                    <CCol sm="6">
+                <CRow>
+                    <CCol>
+                        <h2 className="subtitle">
+                            Sé parte de nuestro equipo en las oficinas centrales y ayúdanos a Conectar Guate de forma fácil, rápida y segura.
+                        </h2>
+                    </CCol>
+                </CRow>
+                <CRow className="form">
+                    <CCol sm="4">
+                        <CRow className="">
+                            <h3 className="title_available">
+                                Vacantes disponibles
+                            </h3>
+                        </CRow>
+                        <br/>
+                        <CRow className="">
+                            <h3 className="subtitle_left">
+                                Vacantes Ciudad Capital
+                            </h3>
+                        </CRow>
+                        <br/>
                         <CRow className="">
                             <p className="d-inline-flex copy">
                                 Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
@@ -66,22 +85,40 @@ function InfoForm(props) {
                                 when an unknown printer took a galley of type and scrambled it to make a type 
                                 specimen book. 
                             </p>
-                            
+                            <p className="d-inline-flex copy">
+                                Disponible hasta: <p className="until"> 01/11/2021 </p>
+                            </p>
+                        </CRow>
+                        <CRow className="separator">	&nbsp; </CRow>
+                        <br/>
+                        <CRow className="">
+                            <h3 className="subtitle_left">
+                                Mensajeria motorista
+                            </h3>
                         </CRow>
                         <br/>
-                        <ItemList text="Reporteria"/> 
-                        <ItemList text="Prueba de entrega (P.O.D.)"/> 
-                        <ItemList text="Seguro en tránsito"/> 
-                        <ItemList text="Atención personalizada"/> 
-                        <br/>
+                        <CRow className="">
+                            <p className="d-inline-flex copy">
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                when an unknown printer took a galley of type and scrambled it to make a type 
+                                specimen book. 
+                            </p>
+                            <p className="d-inline-flex copy">
+                                Disponible hasta: <p className="until"> 15/10/2021 </p>
+                            </p>
+                        </CRow>
                         <br/>
                     </CCol>
-                    <CCol sm="6">
+                    <CCol sm="8">
                         <CCard className="form-card">
                             <CCardBody>
                                 <br/>
                                 <CFormGroup>
                                     <CInput value={form.name} id="name" type="text" onChange={handleChangeForm} placeholder="Nombre y Apellido" required/>
+                                </CFormGroup>
+                                <CFormGroup>
+                                    <CInput value={form.edad} id="edad" type="text" onChange={handleChangeForm} placeholder="Edad*" required/>
                                 </CFormGroup>
                                 <CFormGroup>
                                     <CInput value={form.email} id="email" type="email" onChange={handleChangeForm} placeholder="Correo electrónico" required/>
@@ -90,13 +127,17 @@ function InfoForm(props) {
                                     <CInput value={form.phone} id="phone" type="tel" onChange={handleChangeForm} placeholder="Teléfono: 0000-0000" pattern="[0-9]{4}-[0-9]{4}" required/>
                                 </CFormGroup>
                                 <CFormGroup>
-                                    <CInput value={form.empresa} id="empresa" type="text" onChange={handleChangeForm} placeholder="Empresa*" required/>
+                                    <CInput value={form.plaza} id="plaza" type="text" onChange={handleChangeForm} placeholder="Plaza a la que aplicas*" required/>
                                 </CFormGroup>
                                 <CFormGroup>
-                                    <CInput value={form.fecha_entrega} id="fecha_entrega" type="text" onChange={handleChangeForm} placeholder="Fecha de entrega*" />
-                                </CFormGroup>
-                                <CFormGroup>
-                                    <CInput value={form.paquetes} id="paquetes" type="text" onChange={handleChangeForm} placeholder="Cantidad de paquetes*" />
+                                    <CTextarea 
+                                        name="message" 
+                                        id="message" 
+                                        rows="4"
+                                        placeholder="¿Por qué te gustaría trabajar con nosotros?" 
+                                        value={form.message}
+                                        onChange={handleChangeForm}
+                                    />
                                 </CFormGroup>
 
                                 <CFormGroup className="form-actions" style={{marginBottom: '0'}}>
