@@ -20,8 +20,6 @@ import {
     CLabel,
     CTextarea
   } from '@coreui/react'
-  import { DocsLink } from 'src/reusable'
-  import CIcon from '@coreui/icons-react'
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
   import { faSearch } from '@fortawesome/free-solid-svg-icons'
   import { ToastProvider, useToasts } from 'react-toast-notifications';
