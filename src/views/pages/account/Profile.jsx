@@ -30,11 +30,14 @@ import {
       useRouteMatch,
       useParams
   } from "react-router-dom";
+  import {reactLocalStorage} from 'reactjs-localstorage';
 
 function Profile(props) {
     const history = useHistory();
     const { addToast } = useToasts();
     const [render_days, setRenderDays] = useState([]);
+    const [departamentos, setDepartamentos] = useState([]);
+    const [municipios, setMunicipios] = useState([]);
     const inputFile = useRef(null) 
 
     const [profile, setProfile] = useState({
@@ -179,6 +182,49 @@ function Profile(props) {
         }
         setRenderDays(render);
     }, []);
+
+
+    useEffect(()=>{
+        const user_object = reactLocalStorage.getObject('user');
+        console.log(user_object);
+        if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+            history.push('/login');
+        }else{
+            const config = {
+                headers: { Authorization: `Bearer ${user_object.token}` }
+            };
+        
+            axios.get(
+            'https://ws.conectaguate.com/api/v1/site/departamentos/',
+            config,
+            ).then(
+            (result) => {
+                const departamentos_response = result.data.Data;
+                setDepartamentos(departamentos_response);
+                console.log(departamentos_response);
+            },
+            (error) => {
+                if (error.response) {
+                console.log(error.response);
+                }
+            });
+
+            axios.get(
+                'https://ws.conectaguate.com/api/v1/site/municipios/',
+                config,
+                ).then(
+                (result) => {
+                    const municipios_response = result.data.Data;
+                    setMunicipios(municipios_response);
+                    console.log(municipios_response);
+                },
+                (error) => {
+                    if (error.response) {
+                    console.log(error.response);
+                    }
+                });
+        }
+    },[])
 
     useEffect(()=>{
         let number_of_days = 0;
@@ -471,13 +517,33 @@ function Profile(props) {
                     </CCol>
                 </CRow>
                 <CRow>
-                    <CCol sm="9">
+                    <CCol sm="4">
                         <CFormGroup>
-                        <   CLabel htmlFor="poblado_municipio">Poblado / Municipio</CLabel>
-                            <CInput onChange={handleChange} value={profile.poblado_municipio} id="poblado_municipio" placeholder="" required />
+                            <CLabel htmlFor="tipo_de_producto">Departamento</CLabel>
+                            <CFormGroup>
+                                <CSelect onChange={handleChange} value={profile.departamento} custom name="departamento" id="departamento">
+                                    <option></option>
+                                    {departamentos.map((elem)=>{
+                                        return <option key={elem.id} value={elem.nombre}>{elem.nombre}</option>
+                                    })}
+                                </CSelect>
+                            </CFormGroup>
                         </CFormGroup>
                     </CCol>
-                    <CCol sm="3">
+                    <CCol sm="4">
+                        <CFormGroup>
+                            <CLabel htmlFor="tipo_de_producto">Municipio</CLabel>
+                            <CFormGroup>
+                                <CSelect onChange={handleChange} value={profile.municipio} custom name="municipio" id="municipio">
+                                    <option></option>
+                                    {municipios.map((elem)=>{
+                                        return <option key={elem.id} value={elem.nombre}>{elem.nombre}</option>
+                                    })}
+                                </CSelect>
+                            </CFormGroup>
+                        </CFormGroup>
+                    </CCol>
+                    <CCol sm="4">
                         <CLabel htmlFor="ubicacion">Compartir ubicación</CLabel>
                         <CRow className="switch-container">          
                             <label className="switch">

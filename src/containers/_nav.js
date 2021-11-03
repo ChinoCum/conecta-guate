@@ -21,6 +21,12 @@ const _nav =  [
     icon: 'cil-paper-plane',
   },
   {
+    _tag: 'CSidebarNavItem',
+    name: <>Cross Selling &nbsp;	<span style={{backgroundColor: '#ffc600', fontWeight: '500',color: 'black', paddingLeft:'3px', paddingRight:'3px'}}> PREMIUM </span></>,
+    to: '/cross-selling',
+    icon: 'cil-bell',
+  },
+  {
     _tag: 'CSidebarNavDropdown',
     className: 'c-sidebar-nav-arrow-dropdown',
     name: <>Cuenta <CIcon id="icon-arrow" style={{color:'#91b515 !important'}} name="cil-chevron-bottom" customClasses="c-sidebar-nav-icon"/></>,

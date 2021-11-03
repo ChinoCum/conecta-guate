@@ -7,6 +7,7 @@ const MisEnvios = React.lazy(() => import('./views/pages/dashboard/MisEnvios'))
 const PlanesDisponibles = React.lazy(() => import('./views/pages/dashboard/PlanesDisponibles'))
 const Coberturas = React.lazy(() => import('./views/pages/dashboard/Coberturas'))
 const Recomendaciones = React.lazy(() => import('./views/pages/dashboard/Recomendaciones'))
+const CrossSelling = React.lazy(() => import('./views/pages/dashboard/CrossSelling'))
 
 
 const routes = [
@@ -20,7 +21,7 @@ const routes = [
   { path: '/planes-disponibles', name: 'Planes Disponibles', component: PlanesDisponibles },
   { path: '/coberturas', name: 'Coberturas', component: Coberturas },
   { path: '/recomendaciones', name: 'Recomendaciones', component: Recomendaciones },
-
+  { path: '/cross-selling', name: 'Cross Selling', component: CrossSelling },
 ];
 
 export default routes;

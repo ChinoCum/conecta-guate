@@ -21,6 +21,7 @@ const Home = React.lazy(() => import('./views/pages/home/Home'));
 const Tracking = React.lazy(() => import('./views/pages/tracking/Tracking'));
 const Mensajeria = React.lazy(() => import('./views/pages/mensajeria/Mensajeria'))
 const BolsaDeEmpleo = React.lazy(() => import('./views/pages/bolsa_empleo/BolsaDeEmpleo'))
+const Planes = React.lazy(() => import('./views/pages/planes/Planes'))
 
 class App extends Component {
 
@@ -38,6 +39,7 @@ class App extends Component {
                 <Route exact path="/bolsa-de-empleo" name="Bolsa de Empleo" render={props => <BolsaDeEmpleo {...props}/>} />
                 <Route exact path="/login" name="Login" render={props => <Login {...props}/>} />
                 <Route exact path="/register" name="Register" render={props => <Register {...props}/>} />
+                <Route exact path="/planes" name="Planes" render={props => <Planes {...props}/>} />
                 <Route path="/creacion-pedido" name="Creacion de Pedido" render={props => <TheLayout {...props}/>} />
                 <Route path="/cuenta/perfil" name="Perfil" render={props => <TheLayout {...props}/>} />
                 <Route path="/cuenta/password" name="Password" render={props => <TheLayout {...props}/>} />
@@ -46,6 +48,7 @@ class App extends Component {
                 <Route path="/planes-disponibles" name="Planes Disponibles" render={props => <TheLayout {...props}/>} />
                 <Route path="/coberturas" name="Coberturas" render={props => <TheLayout {...props}/>} />
                 <Route path="/recomendaciones" name="Recomendaciones" render={props => <TheLayout {...props}/>} />
+                <Route path="/cross-selling" name="Cross Selling" render={props => <TheLayout {...props}/>} />
                 <Route path="/tracking/:id" name="Tracking Page" render={props => <Tracking {...props}/>} />
               </Switch>
             </React.Suspense>
