@@ -55,21 +55,50 @@ function PlanesInfo(props) {
     });
 
     const onChangePlan = (name) =>{
-        Object.keys(planSelected).forEach((elem)=>{
+        let plans;
+        switch(name){
+            case 'free':
+                plans = {
+                    free: true,
+                    pro: false,
+                    startup: false,
+                    premium: false
+                }
+                break;
+            case 'pro':
+                plans = {
+                    free: false,
+                    pro: true,
+                    startup: false,
+                    premium: false
+                }
+                break;
+            case 'startup':
+                plans = {
+                    free: false,
+                    pro: false,
+                    startup: true,
+                    premium: false
+                }
+                break;
+            case 'premium':
+                plans = {
+                    free: false,
+                    pro: false,
+                    startup: false,
+                    premium: true
+                }
+                break;
+            default:
+                plans = {
+                    free: false,
+                    pro: false,
+                    startup: false,
+                    premium: false
+                }
+        }
 
-        });
-
-        setPlanSelected({
-            free: false,
-            pro: false,
-            startup: false,
-            premium: false
-        });
-
-        setPlanSelected({
-            ...planSelected,
-            [name]: true
-        });
+        setPlanSelected(plans);
     }
 
     return (

@@ -4,7 +4,7 @@ import PublicFooter from '../global/PublicFooter';
 import HeaderImage from './HeaderImage';
 import PublicHeader from '../global/PublicHeader';
 import PlanesInfo from './PlanesInfo';
-
+import Packs from './Packs';
 
 
 function Planes(props) {
@@ -13,6 +13,7 @@ function Planes(props) {
             <PublicHeader />
             <HeaderImage />
             <PlanesInfo />
+            <Packs />
             <PublicFooter />
         </>
     )

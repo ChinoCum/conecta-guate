@@ -276,6 +276,24 @@ function Profile(props) {
         setRenderDays(render);
     }, [profile.fecha_nacimiento_month]);
 
+    //  Testing get location
+    let current_location = document.getElementById("location");
+    const success = (position) => {
+    const longitude = position.coords.longitude;
+    const latitude = position.coords.latitude;
+    
+    current_location.textContent = `Longitute = ${longitude} \n latitude = ${latitude}`;
+    }
+    const error = (error) => {
+        current_location.textContent = `Couldn't access your location \n Reason: ${error.message}`;
+    }
+    const getLocation = () => {
+    if(navigator.geolocation)
+        navigator.geolocation.getCurrentPosition(success,error);
+    else 
+        current_location.textContent = `Your browser does not support this feature`;
+    }
+
     return (
         <>  
             <div className="profile-container">
@@ -547,12 +565,13 @@ function Profile(props) {
                         <CLabel htmlFor="ubicacion">Compartir ubicación</CLabel>
                         <CRow className="switch-container">          
                             <label className="switch">
-                                <input type="checkbox" id="efectivo-pago" />
+                                <input type="checkbox" id="efectivo-pago" onClick={getLocation} />
                                 <div className="slider round">
                                 <span className="on">Si</span>
                                 <span className="off">no</span>
                                 </div>
                             </label>
+                            <div id = "location"></div>
                         </CRow>
                     </CCol>
                 </CRow>
