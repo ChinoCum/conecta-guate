@@ -22,6 +22,7 @@ import {
     CImg
   } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
+import { useToasts } from 'react-toast-notifications';
 
 function InfoForm(props) {
     const [form, setForm] = useState({
@@ -32,6 +33,7 @@ function InfoForm(props) {
         fecha_entrega: '',
         paquetes: ''
     });
+    const { addToast } = useToasts();
 
     const handleChangeForm = (e) =>{
         const {id, value} = e.target;
@@ -44,6 +46,48 @@ function InfoForm(props) {
     }
 
     const onSubmit = () => {
+        let error = false;
+        let labels = {
+            name: "Nombre",
+            email: "Correo Electrónico",
+            phone: "Teléfono",
+            empresa: "Empresa",
+            fecha_entrega: "Fecha de Entrega",
+            paquetes: "Paquetes"
+        };
+
+        for (const [key, value] of Object.entries(form)) {
+            if(value.length === 0){
+                addToast(`El campo ${labels[key]} es requerido`, { 
+                    appearance: 'error', 
+                    autoDismiss : true ,
+                    autoDismissTimeout : 4000
+                });
+                error = true;
+            }
+            if(key === "email"){
+                const em = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if(!em.test(String(value).toLowerCase())){
+                    addToast(`El Correo Electrónico no es valido`, { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    error = true;
+                }
+            }
+            if(key === "phone"){
+                const te = /^[-\s\.]?[0-9]{4}[-\s\.]?[0-9]{4}$/im;
+                if(!te.test(String(value).toLowerCase())){
+                    addToast(`El Numero Telefonico no es valido`, { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    error = true;
+                }
+            }
+        }
 
     }
 

@@ -58,7 +58,7 @@ function Plans(props) {
                     </CCol>
                     <CCol className="col-md-auto">
                         <CButton onClick={()=>{
-                             history.push('/mensajeria');
+                             history.push('/mensajeria-corporativa');
                         }} className="button2" type="submit" size="lg" color="secondary">Mensajeria Corporativa</CButton>
                     </CCol>
                     {/* <CCol lg="1"></CCol> */}

@@ -20,6 +20,8 @@ import { useHistory } from "react-router-dom";
 import {reactLocalStorage} from 'reactjs-localstorage';
 import { ToastProvider, useToasts } from 'react-toast-notifications';
 import axios from 'axios';
+import { loginUser } from 'src/api/apiHandler';
+import { data } from 'react-dom-factories';
 
 const Login = () => {
   const { addToast } = useToasts();
@@ -54,7 +56,7 @@ const Login = () => {
     setLogin(new_data);
   }
 
-  const onSubmit = () =>{
+  const onSubmit = async () =>{
     let error = false;
     let labels = {
       username: "Correo Electrónico",
@@ -92,14 +94,11 @@ const Login = () => {
       remember_me: true
     }
 
-    axios({
-      method: 'post',
-      url: 'https://ws.conectaguate.com/api/auth/login',
-      data: object_login,
-      headers: {"Access-Control-Allow-Origin": "*"}
-    }).then(
-      (result) => {
-        console.log(result);
+    const dataApi = await loginUser(object_login);
+    console.log(dataApi);
+    if(dataApi.valid){
+      let result = dataApi.response;
+      console.log(result);
         addToast(`Login Exitoso`, { 
             appearance: 'success', 
             autoDismiss : true ,
@@ -116,21 +115,31 @@ const Login = () => {
         })
 
         history.push('/creacion-pedido');
-      },
-      // Note: it's important to handle errors here
-      // instead of a catch() block so that we don't swallow
-      // exceptions from actual bugs in components.
-      (error) => {
-        if (error.response) {
-          console.log(error.response);
-          addToast(`Usuario o Contraseña incorrectos`, { 
-              appearance: 'error', 
-              autoDismiss : true ,
-              autoDismissTimeout : 4000
-          });
-        }
+ 
+    }else{
+      let error = dataApi.response;
+      if (error.response) {
+        console.log(error.response);
+        addToast(`Usuario o Contraseña incorrectos`, { 
+            appearance: 'error', 
+            autoDismiss : true ,
+            autoDismissTimeout : 4000
+        });
       }
-    );
+    }
+
+    // axios({
+    //   method: 'post',
+    //   url: 'https://ws.conectaguate.com/api/auth/login',
+    //   data: object_login,
+    //   headers: {"Access-Control-Allow-Origin": "*"}
+    // }).then(
+    //   (result) => {
+    //          },
+    //   (error) => {
+       
+    //   }
+    // );
 
   }
 

@@ -51,7 +51,7 @@ function Sales(props) {
                                 <CRow>
                                     <CCol className="cta">
                                         <CButton className="button" onClick={()=>{
-                                            history.push('/ventas');
+                                            history.push('/mensajeria-corporativa');
                                         }}  type="submit" size="lg" color="secondary">Ver más</CButton>
                                     </CCol>
                                 </CRow>

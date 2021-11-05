@@ -31,9 +31,8 @@ function InfoForm(props) {
         edad: '',
         email: '',
         phone: '',
-        empresa: '',
-        fecha_entrega: '',
-        paquetes: ''
+        plaza: '',
+        message: ''
     });
 
     const handleChangeForm = (e) =>{
@@ -49,55 +48,46 @@ function InfoForm(props) {
     const onSubmit = () => {
         let error = false;
         let labels = {
-            name: "Nombre y Apellido",
-            edad: "Edad",
-            email: "Correo Electrónico",
-            phone: "Teléfono",
-            empresa: "Empresa",
-            fecha_entrega: 'Fecha de Entrega',
-            paquetes: 'Paquetes'
+            name: 'Nombre y Apellido',
+            edad: 'Edad',
+            email: 'Correo Electrónico',
+            phone: 'Teléfono',
+            plaza: 'Plaza'
         };
 
-        // for (const [key, value] of Object.entries(form)) {
-        //     if(value.length === 0){
-        //         addToast(`El campo ${labels[key]} es requerido`, { 
-        //             appearance: 'error', 
-        //             autoDismiss : true ,
-        //             autoDismissTimeout : 4000
-        //         });
-        //         error = true;
-        //     }
-        //     if(key === "email"){
-        //         const em = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        //         if(!em.test(String(value).toLowerCase())){
-        //             addToast(`El Correo Electrónico no es valido`, { 
-        //                 appearance: 'error', 
-        //                 autoDismiss : true ,
-        //                 autoDismissTimeout : 4000
-        //             });
-        //             error = true;
-        //         }
-        //     }
-        //     if(key === "phone"){
-        //         const te = /^[-\s\.]?[0-9]{4}[-\s\.]?[0-9]{4}$/im;
-        //         if(!te.test(String(value).toLowerCase())){
-        //             addToast(`El Numero Telefonico no es valido`, { 
-        //                 appearance: 'error', 
-        //                 autoDismiss : true ,
-        //                 autoDismissTimeout : 4000
-        //             });
-        //             error = true;
-        //         }
-        //     }
-        // }
-
-        if(!error){
-            addToast(`Reminder: You are doing a great job`, { 
-                appearance: 'success', 
-                // autoDismiss : true ,
-                // autoDismissTimeout : 4000
-            });
+        for (const [key, value] of Object.entries(form)) {
+            if(value.length === 0 && key !== 'message'){
+                addToast(`El campo ${labels[key]} es requerido`, { 
+                    appearance: 'error', 
+                    autoDismiss : true ,
+                    autoDismissTimeout : 4000
+                });
+                error = true;
+            }
+            if(key === "email"){
+                const em = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if(!em.test(String(value).toLowerCase())){
+                    addToast(`El Correo Electrónico no es valido`, { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    error = true;
+                }
+            }
+            if(key === "phone"){
+                const te = /^[-\s\.]?[0-9]{4}[-\s\.]?[0-9]{4}$/im;
+                if(!te.test(String(value).toLowerCase())){
+                    addToast(`El Numero Telefonico no es valido`, { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    error = true;
+                }
+            }
         }
+
         
 
         console.log(error);

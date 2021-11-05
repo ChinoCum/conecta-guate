@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { ToastProvider, useToasts } from 'react-toast-notifications';
 import './scss/style.scss';
 import './index.css'
@@ -50,6 +50,7 @@ class App extends Component {
                 <Route path="/recomendaciones" name="Recomendaciones" render={props => <TheLayout {...props}/>} />
                 <Route path="/cross-selling" name="Cross Selling" render={props => <TheLayout {...props}/>} />
                 <Route path="/tracking/:id" name="Tracking Page" render={props => <Tracking {...props}/>} />
+                <Redirect from='*' to='/' />
               </Switch>
             </React.Suspense>
         </HashRouter>

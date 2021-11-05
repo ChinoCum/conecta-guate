@@ -9,46 +9,55 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { useHistory } from "react-router-dom";
-import {reactLocalStorage} from 'reactjs-localstorage';
-import axios from 'axios';
+import { reactLocalStorage } from 'reactjs-localstorage';
+import { authUser } from '../api/apiHandler'
+import { useToasts } from 'react-toast-notifications';
 
-const TheHeaderDropdown = () => {
+const TheHeaderDropdown =  () => {
   const [user, setUser] = useState({})
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const { addToast } = useToasts();
 
-  useEffect(()=>{
+  useEffect(async ()=>{
     const user_object = reactLocalStorage.getObject('user');
     console.log(user_object);
     if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
         history.push('/login');
+        addToast("Sesión terminada", { 
+          appearance: 'error', 
+          autoDismiss : true ,
+          autoDismissTimeout : 3000
+      });
     }else{
       if(!('name' in user_object)){
           console.log(user_object);
-          const config = {
-              headers: { Authorization: `Bearer ${user_object.token}` }
-          };
         
-          axios.get(
-            'https://ws.conectaguate.com/api/auth/user',
-            config,
-          ).then(
-            (result) => {
-              setUser({
-                ...user_object,
-                name: result.data.name
-              });
-              reactLocalStorage.setObject('user', { 
-                ...user_object,
-                name: result.data.name
-              });
-              console.log("data user", result);
-            },
-            (error) => {
-              if (error.response) {
-                console.log(error.response);
-              }
-          });
+          const data_api = await authUser(user_object.token);
+
+          if(data_api.valid){
+            setUser({
+              ...user_object,
+              name: data_api.response.data.name
+            });
+            reactLocalStorage.setObject('user', { 
+              ...user_object,
+              name: data_api.response.data.name
+            });
+            console.log("data user", data_api);
+          }else{
+            setUser({});
+            addToast("Sesión terminada", { 
+                appearance: 'error', 
+                autoDismiss : true ,
+                autoDismissTimeout : 3000
+            });
+            history.push({
+              pathname: `/login`
+            });
+
+          }
+
       }else{
         setUser({
           ...user_object
