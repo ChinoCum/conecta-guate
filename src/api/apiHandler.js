@@ -5,8 +5,11 @@ import conf from './conf.json';
 
 // Get current users profile
 export const authUser = async (token) => {
+    let bearer = "Bearer "+token;
     const config = {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+            "Authorization": bearer
+        }
     };
     let response;
     try {
@@ -30,14 +33,21 @@ export const authUser = async (token) => {
 
 export const loginUser = async (data) => {
     let response;
-    const headers = {"Access-Control-Allow-Origin": "*"};
+    // const headers = {"Access-Control-Allow-Origin": "*"};
 
     try {
-        const res  = await axios.post(
-            conf.base_url+'/auth/login',
-            data,
-            headers
-        );
+
+        const res = await axios({
+            method: 'post',
+            url: 'https://ws.conectaguate.com/api/auth/login',
+            data: data,
+          });
+
+        // const res  = await axios.post(
+        //     conf.base_url+'/auth/login',
+        //     data,
+        //     // headers
+        // );
         response = {
             valid: true,
             response: res

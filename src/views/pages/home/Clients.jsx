@@ -1,43 +1,29 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import {
-    CButton,
-    CCard,
-    CCardBody,
-    CCardHeader,
     CCol,
     CContainer,
-    CJumbotron,
     CRow,
-    CEmbed,
-    CEmbedItem,
-    CInput,
-    CInputGroup,
-    CInputGroupText,
-    CInputGroupPrepend,
-    CInputGroupAppend,
-    CFormGroup,
-    CLabel,
-    CTextarea,
     CImg
   } from '@coreui/react'
-  import { DocsLink } from 'src/reusable'
-  import CIcon from '@coreui/icons-react'
-  import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-  import { faSearch } from '@fortawesome/free-solid-svg-icons'
+  import { AnimationOnScroll } from 'react-animation-on-scroll';
 
 
 function Clients(props) {
     let row_clients_1 = ['logo-aquacity','logo-ciclon','logo-foodservice','logo-minegocioenlinea'];
     let row_clients_2 = ['logo-pcr','logo-regus','logo-universales','logo-worx'];
+    
+   
+    
     return (
         <>
-            <CContainer className="home-clients">
+            <CContainer className="home-clients" >
                 <CRow className="align-items-center">
                     <CCol>
-                        <h3 className="title">
-                            Clientes Satisfechos
-                        </h3>
+                        <AnimationOnScroll animateOnce={true} animateIn="animate__fadeIn" duration={1}>
+                            <h3 className="title">
+                                Clientes Satisfechos
+                            </h3>
+                        </AnimationOnScroll>
                     </CCol>
                 </CRow>
                 <CRow className="align-items-center clients-sections">
@@ -54,9 +40,11 @@ function Clients(props) {
                 </CRow>
                 <CRow className="align-items-center">
                     <CCol>
-                        <h4 className="subtitle">
-                            ...Y muchos emprendedores que conectan su negocio a toda Guatemala con nuestros servicios.
-                        </h4>
+                        <AnimationOnScroll animateOnce={true} animateIn="animate__fadeInLeftBig" duration={1}>
+                            <h4 className="subtitle">
+                                ...Y muchos emprendedores que conectan su negocio a toda Guatemala con nuestros servicios.
+                            </h4>
+                        </AnimationOnScroll>
                     </CCol>
                 </CRow>
             </CContainer>

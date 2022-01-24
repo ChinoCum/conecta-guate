@@ -33,9 +33,8 @@ import {
     useRouteMatch,
     useParams
 } from "react-router-dom";
+import 'core-js/es/array';
 
-const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown.js'))
-const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 
 
 
@@ -71,36 +70,201 @@ const CreacionPedido = () => {
         contra_entrega: false,
     });
     const [payment, setPayment] = useState(false);
+    const [pedido_creado, setPedidoCreado] = useState("");
+    const [pedido_id, setPedidoId] = useState("");
+    const [tipos_de_pago, setTiposDePago] = useState([]);
+    const [estatus_de_pedido, setEstatusDePedido] = useState([]);
+    const [tipos_de_transporte, setTiposDeTransporte] = useState([]);
+    const [files, setFiles] = useState({});
 
-    const createOrder = () =>{
+    const createOrder = async () =>{
         const order = {};
-        order.informacion_pedido = {... data};
-        order.paquetes = {...rows_data};
-        order.cod = cod_value;
-        order.total_valor_declarado = total_valor_declarado;
-        order.cupon_discount = cupon_value;
-        order.costo_de_envio = costo_de_envio;
-        order.fee_por_cod = cod_value;
-        order.cobro = cobro;
+        const transportes = {
+            "Moto": 1,
+            "Panel": 2
+        }
+        const tipo_de_pago = {
+            contra_entrega: 1,
+            efectivo: 2,
+            transferencia: 3
+        }
+
+        let tipo_pa;
+        if(cobro.contra_entrega){
+            tipo_pa = 1;
+        }else if(cobro.efectivo){
+            tipo_pa = 2
+        }else if(cobro.transferencia){
+            tipo_pa = 3
+        }
+        
+        order.pedido = {
+            tipo_destino: 1,
+            direccion_origen: data.direccion_remitente,
+            nombre_origen: data.remitente,
+            telefono_origen: data.telefono_remitente,
+            departamento_origen: 1,
+            municipio_origen: 1,
+            direccion_destino: data.direccion_destinatario,
+            nombre_destino: data.name_destinatario,
+            telefono_destino: data.telefono_destinatario,
+            departamento_destino: 1,
+            municipio_destino: 1,
+            transporte: transportes[rows_data[0].transporte],
+            tipo_envio: 1,  //
+            tipo_pago: 1, // 
+            COD: (cod_value !== 0) ? true : false, 
+            seguro: seguro_value,
+            costo_envio: total_valor_declarado, // return api cotizar
+            total: total_valor_declarado    // return api cotizar 
+        };
+        
+
+        let arr = [];
+        rows_data.forEach((elem)=>{ 
+            arr.push({
+                id_transporte: transportes[elem.transporte],
+                valor: parseInt(elem.precio),
+                fragil: (elem.fragil === 'off')? false : true
+            });
+        })
+
+        order.detalle = arr;
+
+        console.log(seguro_value);
         console.log(order);
+        console.log(rows_data);
+
+        if(!cobro.contra_entrega && !cobro.efectivo && !cobro.transferencia){
+            addToast(`Debes seleccionar un metodo de pago`, { 
+                appearance: 'warning', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            });
+            return false;
+        }
+        // return false;
+        const user_object = reactLocalStorage.getObject('user');
+        
+        let bearer = "";
+        if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+            reactLocalStorage.remove('user');
+            history.push('/login');
+        }else{  
+            bearer =  `Bearer ${user_object.token}`;
+        }   
+        
+        await axios({
+            method: 'post',
+            url: 'https://ws.conectaguate.com/api/v1/site/pedido/crear',
+            headers: { 
+                'Authorization': bearer,
+                'Content-Type': 'application/json'
+            },
+            data: order
+        }).then((response)=>{
+            let data = response.data;
+            console.log(data);
+            addToast(`Se guardo el pedido correctamente`, { 
+                appearance: 'success', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            });
+
+            setPedidoCreado(data["Data"].guia)
+            setPedidoId(data["Data"].id)
+            setData({...data,
+                destinatario: "",
+                name_destinatario: "",
+                telefono_destinatario: "",
+                correo_destinatario: "",
+                municipio_destinatario: "",
+                direccion_destinatario: "",
+                referencias_destinatario: ""
+            });
+            setSeguroValue(0);
+            setCuponValue(0);
+            setCodValue(0);
+            setCostoDeEnvio(0);
+            setTotalValorDeclarado(0);
+            setRowsData([]);
+            setStep(4);
+            setFiles({});
+        },(error) => {
+            addToast(`Intente mas tarde`, { 
+                appearance: 'error', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            });
+            console.log(error.message)
+        });
+
+        return false;
     }
+
+    useEffect(()=>{
+        const user_object = reactLocalStorage.getObject('user');
+        let bearer = "";
+        console.log(user_object);
+
+        if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+            reactLocalStorage.remove('user');
+            history.push('/login');
+        }else{  
+            bearer =  `Bearer ${user_object.token}`;
+        }   
+
+        const config = {
+            headers: { 
+                "Authorization": bearer
+            }
+        };
+
+        axios.get(
+            'https://ws.conectaguate.com/api/v1/site/usuario/information',
+            config
+        ).then((response)=>{
+            let data_usuario = response.data.usuario;
+            if(data_usuario === null){
+                addToast(`Debes llenar tu información antes de crear un pedido`, { 
+                    appearance: 'warning', 
+                    autoDismiss : true ,
+                    autoDismissTimeout : 4000
+                });
+                history.push('/cuenta/perfil');
+                return false;
+            };
+            
+            setData({
+                ...data,
+                remitente: data_usuario.nombre + " " + data_usuario.apellido,
+                nombre_empresa_remitente: data_usuario.empresa,
+                telefono_remitente: data_usuario.phone,
+                correo_remitente: data_usuario.email,
+                municipio_remitente: data_usuario.municipio,
+                direccion_remitente: data_usuario.direccion_recoleccion
+            })
+        });
+    },[]);
 
 
     useEffect(()=>{
         const user_object = reactLocalStorage.getObject('user');
         console.log(user_object);
         if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+            reactLocalStorage.remove('user');
+            setUser({});
             history.push('/login');
         }else{
           if(!('name' in user_object)){
-              console.log(user_object);
-              const config = {
-                  headers: { Authorization: `Bearer ${user_object.token}` }
-              };
-            
+            try{ 
               axios.get(
                 'https://ws.conectaguate.com/api/auth/user',
-                config,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${user_object.token}`
+                    },
+                },
               ).then(
                 (result) => {
                   setUser({
@@ -118,13 +282,44 @@ const CreacionPedido = () => {
                     console.log(error.response);
                   }
               });
+            } catch(e){
+                console.log(e.message);
+                return false;
+            }
+
           }else{
             setUser({
               ...user_object
             });
           }
+        
         }
-      },[])
+      },[]);
+
+    useEffect(()=>{
+        const user_object = reactLocalStorage.getObject('user');
+
+        if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+            reactLocalStorage.remove('user');
+            setUser({});
+            history.push('/login');
+            return false;
+        }
+
+        let config =  {
+            headers: {'Authorization': `Bearer ${user_object.token}`}
+        };
+        let base_url = 'https://ws.conectaguate.com/api'
+
+        let transportes = new Promise((resolve, reject) => axios({method:'get',url:base_url+'/v1/site/transportes',headers: {'Authorization': `Bearer ${user_object.token}`}}).then((data)=>resolve({key: 'transportes', data:data.data['Data']},'transportes')));
+        let estatus = new Promise((resolve, reject) => axios({method:'get',url:base_url+'/v1/site/estatus',headers: {'Authorization': `Bearer ${user_object.token}`}}).then((data)=>resolve({key: 'estatus', data:data.data['Data']},'estatus')));
+        let tipos_de_pago = new Promise((resolve, reject) => axios({method:'get',url:base_url+'/v1/site/tipopago',headers: {'Authorization': `Bearer ${user_object.token}`}}).then((data)=>resolve({key: 'tipos_de_pago', data:data.data['Data']},'tipos_de_pago')));
+
+        Promise.all([transportes,estatus,tipos_de_pago]).then((values) => {
+            console.log(values);
+        });
+    },[]);
+
 
     useEffect(()=>{
         if(user){
@@ -241,6 +436,7 @@ const CreacionPedido = () => {
             cupon={cupon_value}
             seguro={seguro_value}
             createOrder={createOrder}
+            setFiles={setFiles}
         />: 
         <Step4 
            changeStep={setStep} 
@@ -249,6 +445,9 @@ const CreacionPedido = () => {
            handleChange={handleChange} 
            user={user} 
            checkNextStep={nextStep} 
+           pedido={pedido_creado}
+           pedido_id={pedido_id}
+           files={files}
        />}
     </div>:null
   )
@@ -543,7 +742,7 @@ const Step2 = (props) => {
     const [input_value_seguro, setInputValueSeguro] = useState(0.00);
     const [input_value_cod,  setInputValorCod] = useState(0.00);
 
-    const handleChange = (e) =>{
+    const handleChange = async (e) =>{
         const {id, value} = e.target;
         if(id === 'cod'){
             if(cod === 'on'){
@@ -590,11 +789,13 @@ const Step2 = (props) => {
             props.setCod(val);
             setInputValorCod(inputValueCod);
         }
-
+        
         if(id === 'cupon_input'){
             props.setCupon(value);
-            if(value.length === 6){
-                let isValid = checkCoupon(value);
+            let value_cupon = value.trim();
+            if(value_cupon.length === 9){
+                let isValid = await checkCoupon(value);
+                console.log(isValid);
                 if(!isValid.valid){
                     addToast(`Cupon invalido`, { 
                         appearance: 'error', 
@@ -618,9 +819,10 @@ const Step2 = (props) => {
         }
     }
 
-    const checkCoupon = (cupon) =>{
-        let valid = true;
-        let val = 10;
+    const checkCoupon = async (cupon) =>{
+        const user_object = reactLocalStorage.getObject('user');
+        let valid = false;
+        let val = 0;
         if(cupon === 'TEST01'){
             valid = true;
             val = 10;
@@ -629,10 +831,50 @@ const Step2 = (props) => {
             val = 0;
         }
 
-        return {
-            valid: valid, 
-            value: val
-        };
+        return await axios({
+            method: 'post',
+            url: 'https://ws.conectaguate.com/api/v1/site/cupones/validar',
+            headers: { 
+                'Authorization': `Bearer ${user_object.token}`,
+                'Content-Type': 'application/json'
+            },
+            data: {
+                "codigo": cupon
+            }
+        }).then((result) => {
+           let data = result.data;
+           console.log(data);
+           if(data["cupon"]){
+            valid = true;
+            val = parseInt(data["cupon"].valor);
+            }else if(data["Mensaje"] === "No se encontro el código"){
+                valid = false;
+                val = 0;
+           }else if(data["Mensaje"] === "Codigo expirado"){
+                valid = false;
+                val = 0;
+           }
+
+           console.log(valid);
+           console.log(val);
+           return {
+                valid: valid, 
+                value: val
+           }
+          
+        },
+        (error) => {
+            if (error.response) {
+                console.log(error.response);
+                valid = false;
+                val = 0;
+            }
+            return {
+                valid: valid, 
+                value: val
+           }
+        });
+
     }
 
     const nextStep = () =>{
@@ -680,7 +922,7 @@ const Step2 = (props) => {
             setSeguro('on');
             setInputValueSeguro((props.seguro/.02).toFixed(2));
        }
-       if(props.cupon !== 0 && props.cupon !== ''){
+       if(props.cupon !== 0 && props.cupon !== '' && props.cupon !== null && props.cupon !== undefined){
             setCuponValue(props.cupon);
         }
     }, [])
@@ -887,7 +1129,6 @@ const Step3 = (props) => {
     const inputFile = useRef(null) 
     const [valor, setValor] = useState(0); 
     const { addToast } = useToasts();
-    const [files, setFiles] = useState({});
 
     const DEFAULT_MAX_FILE_SIZE_IN_BYTES = 500000;
     const KILO_BYTES_PER_BYTE = 1000;
@@ -898,7 +1139,10 @@ const Step3 = (props) => {
     const handleNewFileUpload = (e) => {
         const { files: newFiles } = e.target;
         if (newFiles.length) {
-          setFiles(newFiles);
+            var formData = new FormData();
+            console.log(newFiles[0]);
+            formData.append("img", newFiles[0]);
+            props.setFiles(formData);
         }
     };
 
@@ -937,7 +1181,7 @@ const Step3 = (props) => {
                     contra_entrega: bool_value
                 })
                 break
-
+            default: ;
         }
     }
 
@@ -1125,7 +1369,7 @@ const Step3 = (props) => {
                     <CRow className="pills-pago">
                         <CCol sm="3">
                             <CRow className="switch-container">          
-                                <p className="text-pago">Efectivo</p>
+                                <p className="text-pago">Efectivo al Recolectar</p>
                                 <label className="switch">
                                     <input type="checkbox" onChange={handleChange} checked={props.cobro.efectivo} value={props.cobro.efectivo} id="efectivo-pago"  />
                                     <div className="slider round">
@@ -1149,7 +1393,7 @@ const Step3 = (props) => {
                         </CCol>
                         <CCol sm="4">
                             <CRow className="switch-container">          
-                                <p className="text-pago">Al entregar mi paquete</p>
+                                <p className="text-pago">Pago contra entrega</p>
                                 <label className="switch">
                                     <input type="checkbox" onChange={handleChange} checked={props.cobro.contra_entrega} value={props.cobro.contra_entrega} id="contra-entrega-pago" />
                                     <div className="slider round">
@@ -1275,7 +1519,9 @@ const Step3 = (props) => {
 const Step4 = (props) => {
     const inputFile = useRef(null) 
     const [valor, setValor] = useState(0);
-
+    const [url, setUrl] = useState("");
+    const { addToast } = useToasts();
+    const history = useHistory();
 
     useEffect(()=>{
         let value = 0.00;
@@ -1290,7 +1536,39 @@ const Step4 = (props) => {
                 setValor(0);
             }
         }
+        let getUrl = window.location;
+        let baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+        let new_url = `${baseUrl}#/tracking/${props.pedido}`;
+        setUrl(new_url);
     }, [])
+
+
+    useEffect(()=>{
+        const user_object = reactLocalStorage.getObject('user');
+        if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+            reactLocalStorage.remove('user');
+            history.push('/login');
+            return false;
+        }
+        console.log(user_object.token);
+        axios({
+            method: 'post',
+            url: `https://ws.conectaguate.com/api/v1/site/pedido/img/add/${props.pedido_id}`,
+            headers: { 
+                'Authorization': `Bearer ${user_object.token}`
+            },
+            data: props.files
+        }).then((response)=>{
+            console.log(response)
+        },(error) => {
+            addToast(`Intente mas tarde`, { 
+                appearance: 'error', 
+                autoDismiss : true ,
+                autoDismissTimeout : 4000
+            });
+            console.log(error)
+        });
+    },[])
 
 
     return (
@@ -1312,7 +1590,7 @@ const Step4 = (props) => {
                 </CRow>
                 <br/>
                 <CRow className="link-pedido">
-                    <a href="/">33446740-43-42555071720P721</a>
+                    <a href={url} target={"_blank"}>{props.pedido}</a>
                 </CRow>
                 <br/>
                 <CRow className="recomendaciones-container">
@@ -1342,7 +1620,7 @@ const Step4 = (props) => {
                 <CRow className="button-again">
                     <CButton block style={{backgroundColor:'#e9f114', color: '#153b75'}}
                         onClick={()=>{
-                            props.changeStep(2);
+                            props.changeStep(0);
                         }}
                     >Realizar más envíos</CButton>
                 </CRow>

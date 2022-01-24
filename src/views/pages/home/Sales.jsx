@@ -10,12 +10,8 @@ import {
     CRow,
     CImg
   } from '@coreui/react'
-  import { DocsLink } from 'src/reusable'
-  import CIcon from '@coreui/icons-react'
-  import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-  import { faSearch } from '@fortawesome/free-solid-svg-icons'
   import { useHistory } from "react-router-dom";
-
+  import { AnimationOnScroll } from 'react-animation-on-scroll';
 
 function Sales(props) {
     const history = useHistory();
@@ -36,16 +32,20 @@ function Sales(props) {
                             <CCol lg="9">
                                 <CRow>
                                     <CCol>
-                                        <h3 className="title">
-                                            Aumenta <br/> tus ventas
-                                        </h3>
+                                        <AnimationOnScroll animateOnce={true} animateIn="animate__fadeInLeftBig" duration={1}>
+                                            <h3 className="title">
+                                                Aumenta <br/> tus ventas
+                                            </h3>
+                                        </AnimationOnScroll>
                                     </CCol>
                                 </CRow>
                                 <CRow>
                                     <CCol className="body">
-                                        Con envios a toda Guate aumentarás tus 
-                                        ventas. Además con nuestro marketplace
-                                        automatizado llegarás a más personas.
+                                        <AnimationOnScroll animateOnce={true} animateIn="animate__fadeInLeftBig" duration={1}>
+                                            Con envios a toda Guate aumentarás tus 
+                                            ventas. Además con nuestro marketplace
+                                            automatizado llegarás a más personas.
+                                        </AnimationOnScroll>
                                     </CCol>
                                 </CRow>
                                 <CRow>
@@ -61,20 +61,19 @@ function Sales(props) {
                         </CRow>
                     </CCol>
                     <CCol lg="6" className="sales-image-hero">
-                        <CImg
-                            src={"img/hero/office-background-blue.png"}
-                            className="d-inline-block img-fluid"
-                            alt="ventas conecta"
-                        />
+                        <AnimationOnScroll animateOnce={true} animateIn="animate__fadeInRightBig" duration={1}>
+                            <CImg
+                                src={"img/hero/office-background-blue.png"}
+                                className="d-inline-block img-fluid"
+                                alt="ventas conecta"
+                            />
+                        </AnimationOnScroll>
                     </CCol>
             </CRow>
        </>
     )
 }
 
-Sales.propTypes = {
-
-}
 
 export default Sales
 

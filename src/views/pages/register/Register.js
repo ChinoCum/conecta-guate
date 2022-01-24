@@ -20,9 +20,11 @@ import { ToastProvider, useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import { useHistory } from "react-router-dom";
 import {reactLocalStorage} from 'reactjs-localstorage';
+import GoogleLogin from 'react-google-login';
 
 
 const Register = () => {
+  // 619638783948-v4fp9d2b59r0fb7nfi6cpqteja0dai69.apps.googleusercontent.com
   const { addToast } = useToasts();
   const history = useHistory();
   
@@ -44,6 +46,10 @@ const Register = () => {
       }
     }
   },[])
+
+  const responseGoogle = (response) => {
+    console.log(response);
+  }  
 
   const handleChange = (e) => {
     const {id, value} = e.target;
@@ -222,27 +228,31 @@ const Register = () => {
                             </CButton>
                         </CCol>
                       </CRow>
-                      <CRow className="mb-3">
-                        <CCol xs="12">
-                          <CButton 
-                            color="primary" 
-                            className="px-12" 
-                            style={{
-                              width: '100%', 
-                              background:'#D80514', 
-                              border: '1px solid #D80514',
-                              textAlign:'left'
+                      <CRow className="mb-3" style={{
+                              display: 'block',
+                              marginLeft: 'auto',
+                              marginRight:'auto',
+                              width: '100%'
                             }} 
-                            to="/creacion-pedido">
-                              <CImg 
-                                    className="social-icon-button"
-                                    src="/img/icons/google.svg"
-                                    onClick={()=>{
-                                        window.open('https://www.facebook.com/ConectaGuateOficial/', '_blank').focus();
-                                    }}
-                                />
-                              Iniciar Sesión con Google
-                          </CButton>
+                          >
+                        <CCol 
+                          xs="12" 
+                          style={{
+                              display: 'block',
+                              marginLeft: 'auto',
+                              marginRight:'auto',
+                              position: 'relative'
+                            }} 
+                          className="login_google"
+                          >
+                          <GoogleLogin
+                            clientId="619638783948-v4fp9d2b59r0fb7nfi6cpqteja0dai69.apps.googleusercontent.com"
+                            buttonText="Iniciar Sesión con Google"
+                            onSuccess={responseGoogle}
+                            onFailure={responseGoogle}
+                            cookiePolicy={'single_host_origin'}
+                            style={{width: '100%', display:'block'}}
+                          />
                         </CCol>
                       </CRow>
 

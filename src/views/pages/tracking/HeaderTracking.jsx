@@ -67,7 +67,7 @@ function HeaderTracking(props) {
 
     const getGuiaInfo = async (id) =>{
         const config = {};
-        return await axios.get( `https://ws.conectaguate.com/api/v1/tracking/?clave=${id}`, config,).then(
+        return await axios.get( `https://ws.conectaguate.com/api/v1/site/pedidio/guia/${id}`, config).then(
             (result) => {
                 return result.data.existe;
         });

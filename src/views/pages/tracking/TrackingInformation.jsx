@@ -22,139 +22,219 @@ import {
   } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { useToasts } from 'react-toast-notifications';
+import {reactLocalStorage} from 'reactjs-localstorage';
+import 'core-js/es/array';
 
 function TrackingInformation(props) {
     const match = useRouteMatch();
     let { id } = useParams();
     const [info, setInfo] = useState(null)
     const [step_classes, setStepClasses] = useState(null)
+    const [user, setUser] = useState({});
+    const [transportes, setTransportes] = useState(null);
+    const [estatus, setEstatus] = useState(null);
+    const [tipos_de_pago, setTiposDePago] = useState(null);
     const { addToast } = useToasts();
     const history = useHistory();
 
-    useEffect(()=>{
+    const isoToDate = (str) => {
+        let date_edited = new Date(str);
+        let year = date_edited.getFullYear();
+        let month = date_edited.getMonth()+1;
+        let dt = date_edited.getDate();
+
+        if (dt < 10) {
+            dt = '0' + dt;
+        }
+        if (month < 10) {
+            month = '0' + month;
+        }
+        date_edited = dt+"-"+month+"-"+year;
+        return date_edited
+    }
+
+    // useEffect(()=>{
         
-        console.log("Id:", id);
-        const config = {};
-        axios.get( `https://ws.conectaguate.com/api/v1/tracking/?clave=${id}`, config,).then(
-        (result) => {
-            let res = result.data;
-            let classes = {};
-            res.pedido.estado_pedido = 'cancelado';
-            // res.pedido.estado_pedido = 'almacen';
-            // cancelado
-            // liquidado
-            // devolucion
-            // recibido
-            // almacen
-            // transito
-            // completada
-            if(!res.existe){
-                addToast('Guia no valida', { 
-                    appearance: 'error', 
-                    autoDismiss : true ,
-                    autoDismissTimeout : 3000
-                });
-                history.push({
-                    pathname: `/`,
-                });
-                return false
-            }else{
-                setInfo({...res.pedido})
-            }
-            
-            if(res.pedido.estado_pedido === 'completada'){
-                classes.step1 = "stepper-item completed"
-                classes.step2 = "stepper-item completed"
-                classes.step3 = "stepper-item completed"
-                classes.step4 = "stepper-item completed"
-                classes.step1_img = "completed"
-                classes.step2_img = "completed"
-                classes.step3_img = "completed"
-                classes.step4_img = "completed"
-            }else if(res.pedido.estado_pedido === 'transito'){
-                classes.step1 = "stepper-item completed"
-                classes.step2 = "stepper-item completed"
-                classes.step3 = "stepper-item active"
-                classes.step4 = "stepper-item "
-                classes.step1_img = "completed"
-                classes.step2_img = "completed"
-                classes.step3_img = "active"
-                classes.step4_img = "completed-hold"
-            }else if(res.pedido.estado_pedido === 'almacen'){
-                classes.step1 = "stepper-item completed"
-                classes.step2 = "stepper-item active"
-                classes.step3 = "stepper-item "
-                classes.step4 = "stepper-item "
-                classes.step1_img = "completed"
-                classes.step2_img = "active"
-                classes.step3_img = "completed-hold"
-                classes.step4_img = "completed-hold"
-            }else if(res.pedido.estado_pedido === 'recibido'){
-                classes.step1 = "stepper-item active"
-                classes.step2 = "stepper-item "
-                classes.step3 = "stepper-item "
-                classes.step4 = "stepper-item "
-                classes.step1_img = "active"
-                classes.step2_img = "completed-hold"
-                classes.step3_img = "completed-hold"
-                classes.step4_img = "completed-hold"
-            }else if(res.pedido.estado_pedido === 'devolucion'){
-                classes.step1 = "stepper-item completed"
-                classes.step2 = "stepper-item completed"
-                classes.step3 = "stepper-item active"
-                classes.step4 = "stepper-item "
-                classes.step1_img = "completed"
-                classes.step2_img = "completed"
-                classes.step3_img = "active"
-                classes.step4_img = "completed-hold"
-            }else if(res.pedido.estado_pedido === 'liquidado'){
-                classes.step1 = "stepper-item completed"
-                classes.step2 = "stepper-item completed"
-                classes.step3 = "stepper-item completed"
-                classes.step4 = "stepper-item completed"
-                classes.step1_img = "completed"
-                classes.step2_img = "completed"
-                classes.step3_img = "completed"
-                classes.step4_img = "completed"
-            }else if(res.pedido.estado_pedido === 'cancelado'){
-                classes.step1 = "stepper-item completed"
-                classes.step2 = "stepper-item completed"
-                classes.step3 = "stepper-item completed"
-                classes.step4 = "stepper-item "
-                classes.step1_img = "completed"
-                classes.step2_img = "completed"
-                classes.step3_img = "completed"
-                classes.step4_img = "completed-hold"
-            }
-            setStepClasses({...classes})
-            console.log("data info", res);
+    // },[]);
 
+    useEffect(()=>{
+        const user_object = reactLocalStorage.getObject('user');
 
-        },
-        (error) => {
-            if (error.response) {
-                console.log(error.response);
-            }
+        if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+            reactLocalStorage.remove('user');
+            setUser({});
+            history.push('/login');
+            return false;
+        }
+        let base_url = 'https://ws.conectaguate.com/api'
+
+        let transportes = new Promise((resolve, reject) => axios({method:'get',url:base_url+'/v1/site/transportes',headers: {'Authorization': `Bearer ${user_object.token}`}}).then((data)=>resolve({key: 'transportes', data:data.data['Data']},'transportes')));
+        let estatus = new Promise((resolve, reject) => axios({method:'get',url:base_url+'/v1/site/estatus',headers: {'Authorization': `Bearer ${user_object.token}`}}).then((data)=>resolve({key: 'estatus', data:data.data['Data']},'estatus')));
+        let tipos_de_pago = new Promise((resolve, reject) => axios({method:'get',url:base_url+'/v1/site/tipopago',headers: {'Authorization': `Bearer ${user_object.token}`}}).then((data)=>resolve({key: 'tipos_de_pago', data:data.data['Data']},'tipos_de_pago')));
+
+        Promise.all([transportes,estatus,tipos_de_pago]).then((values) => {
+            values.forEach((elem)=>{
+                let obj = {};
+                switch(elem.key){
+                    case 'transportes':
+                        elem.data.forEach((elem)=>{
+                            obj[elem.id] = elem;
+                        })
+                        setTransportes(obj);
+                        break;
+                    case 'estatus':
+                        elem.data.forEach((elem)=>{
+                            obj[elem.id] = elem;
+                        })
+                        setEstatus(obj);
+                        break;
+                    case 'tipos_de_pago':
+                        elem.data.forEach((elem)=>{
+                            obj[elem.id] = elem;
+                        })
+                        setTiposDePago(obj);
+                        break;
+                    default:
+                        ;
+                }
+            })
+            console.log(values);
         });
     },[]);
+
+    useEffect(()=>{
+        if(transportes !== null && estatus !== null && tipos_de_pago !== null){
+            const config = {};
+            axios.get( `https://ws.conectaguate.com/api/v1/site/pedidio/guia/${id}`, config,).then(
+            (result) => {
+                let res = result.data["Data"];
+                let classes = {};
+                if(result.data["Data"]["Pedido"] === null){
+                    addToast('Guia no valida', { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 3000
+                    });
+                    history.push({
+                        pathname: `/`,
+                    });
+                    return false
+                }else{
+                    let pedido = res["Pedido"];
+                    res["Pedido"].estado_pedido = estatus[res["Pedido"].status].nombre;
+                    console.log(res["Pedido"].estado_pedido);
+                    setInfo({
+                        ...pedido,
+                        created_at: isoToDate(pedido.created_at),
+                        updated_at: isoToDate(pedido.updated_at),
+                        tipo_pago: tipos_de_pago[pedido.tipo_pago].nombre,
+                        nombre_tienda: (res["Empresa"]) ? res["Empresa"] : ""
+                    })
+                }
+                
+                if(res["Pedido"].estado_pedido === 'Completada'){
+                    classes.step1 = "stepper-item completed"
+                    classes.step2 = "stepper-item completed"
+                    classes.step3 = "stepper-item completed"
+                    classes.step4 = "stepper-item completed"
+                    classes.step1_img = "completed"
+                    classes.step2_img = "completed"
+                    classes.step3_img = "completed"
+                    classes.step4_img = "completed"
+                }else if(res["Pedido"].estado_pedido === 'Transito'){
+                    classes.step1 = "stepper-item completed"
+                    classes.step2 = "stepper-item completed"
+                    classes.step3 = "stepper-item active"
+                    classes.step4 = "stepper-item "
+                    classes.step1_img = "completed"
+                    classes.step2_img = "completed"
+                    classes.step3_img = "active"
+                    classes.step4_img = "completed-hold"
+                }else if(res["Pedido"].estado_pedido === 'Almacen'){
+                    classes.step1 = "stepper-item completed"
+                    classes.step2 = "stepper-item active"
+                    classes.step3 = "stepper-item "
+                    classes.step4 = "stepper-item "
+                    classes.step1_img = "completed"
+                    classes.step2_img = "active"
+                    classes.step3_img = "completed-hold"
+                    classes.step4_img = "completed-hold"
+                }else if(res["Pedido"].estado_pedido === 'Creado'){
+                    classes.step1 = "stepper-item active"
+                    classes.step2 = "stepper-item "
+                    classes.step3 = "stepper-item "
+                    classes.step4 = "stepper-item "
+                    classes.step1_img = "active"
+                    classes.step2_img = "completed-hold"
+                    classes.step3_img = "completed-hold"
+                    classes.step4_img = "completed-hold"
+                }else if(res["Pedido"].estado_pedido === 'Recibido'){
+                    classes.step1 = "stepper-item active"
+                    classes.step2 = "stepper-item "
+                    classes.step3 = "stepper-item "
+                    classes.step4 = "stepper-item "
+                    classes.step1_img = "active"
+                    classes.step2_img = "completed-hold"
+                    classes.step3_img = "completed-hold"
+                    classes.step4_img = "completed-hold"
+                }else if(res["Pedido"].estado_pedido === 'Devolucion'){
+                    classes.step1 = "stepper-item completed"
+                    classes.step2 = "stepper-item completed"
+                    classes.step3 = "stepper-item active"
+                    classes.step4 = "stepper-item "
+                    classes.step1_img = "completed"
+                    classes.step2_img = "completed"
+                    classes.step3_img = "active"
+                    classes.step4_img = "completed-hold"
+                }else if(res["Pedido"].estado_pedido === 'Liquidado'){
+                    classes.step1 = "stepper-item completed"
+                    classes.step2 = "stepper-item completed"
+                    classes.step3 = "stepper-item completed"
+                    classes.step4 = "stepper-item completed"
+                    classes.step1_img = "completed"
+                    classes.step2_img = "completed"
+                    classes.step3_img = "completed"
+                    classes.step4_img = "completed"
+                }else if(res["Pedido"].estado_pedido === 'Cancelado'){
+                    classes.step1 = "stepper-item completed"
+                    classes.step2 = "stepper-item completed"
+                    classes.step3 = "stepper-item completed"
+                    classes.step4 = "stepper-item "
+                    classes.step1_img = "completed"
+                    classes.step2_img = "completed"
+                    classes.step3_img = "completed"
+                    classes.step4_img = "completed-hold"
+                }
+                setStepClasses({...classes})
+                console.log("data info", res);
+
+
+            },
+            (error) => {
+                if (error.response) {
+                    console.log(error.response);
+                }
+            });
+        }
+    },[transportes, estatus, tipos_de_pago])
 
     const info_keys = {
         created_at: 'Fecha',
         updated_at: 'Actualización',
-        id_orden: 'Orden',
+        id: 'Orden',
         guia: 'Guía',
         estado_pedido: 'Estado',
-        nombre_destinatario: 'Destinatario',
+        nombre_destino: 'Destinatario',
         nombre_tienda: 'Tienda',
-        telefono_destinatario: 'Telefono destino',
-        forma_pago: 'Pago',
+        telefono_destino: 'Telefono destino',
+        tipo_pago: 'Pago',
         municipio_destino: 'Destino'
        
     }
 
     const info_keys_full_rows = {
-        direccion_envio: 'Direccion de entrega',
-        descripcion_producto: 'Descripción de producto',
+        direccion_destino: 'Direccion de entrega',
+        // descripcion_producto: 'Descripción de producto',
         comentarios: 'Comentarios'
     }
     

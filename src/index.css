@@ -2066,6 +2066,13 @@ body .login-container {
   background-color: #e6e9f0;
 }
 
+body .login-container .login_google button{
+  width: 100% !important;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #e6e9f0;
+}
+
 body .login-container .login-row {
   width: 100vw;
   height: 100vh;
@@ -3184,12 +3191,69 @@ body .planes-info {
 }
 
 body .planes-info .planes-title {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #153b75;
+  font-size: 3rem;
+  width: 100%;
+  font-weight: 200;
+}
+
+body .planes-update .plan-inner-card{
+  border: 0px solid;
+  background-color: #F9F9F9;
+}
+
+body .planes-update .plan-inner-card-2{
+  border-left: 10px #F4BD00 solid;
+  border-right: 10px #F4BD00 solid;
+  border-bottom: 10px #F4BD00 solid;
+  background-color: #F9F9F9;
+}
+
+
+body .planes-update .plan{
   margin-top: 3rem;
   text-align: center;
   color: #153b75;
-  font-size: 2rem;
+  font-size: 2.5rem;
   width: 100%;
+  font-weight: 600;
 }
+
+
+body .planes-update .month{
+  margin-top: 3rem;
+  text-align: center;
+  color: #153b75;
+  font-size: 1rem;
+  width: 100%;
+  font-weight: 600;
+}
+
+body .planes-update .actual-plan{ 
+  background-color: #f3bd00;
+  color: white;
+  border-radius: 3px;
+  width: 100%;
+  text-align: right;
+  display: block;
+  padding-right: 1rem;
+  padding-top: .2rem;
+  padding-bottom: .2rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body .planes-update .actual-plan .actual-plan-text{
+  text-align: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+
 /* 
 body .planes-info .plan-card {
   margin-top: 1rem;
@@ -3300,6 +3364,12 @@ body .packs-container {
   cursor: pointer;
 }
 
+body .packs-container .pack{ 
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  height: 230px;
+}
+
 /* // MARK: Video Component - Media Queries */
 @media only screen and (max-width: 600px) and (max-width: 992px) {
   body .packs-container .pack{ 
@@ -3313,6 +3383,18 @@ body .packs-container {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+
+  body .planes-header .planes-header-background {
+    position: relative;
+    background: url("/src/assets/img/hero/planes.png") no-repeat center center;
+    width: 100%;
+    height: 20vh;
+    background-size: contain;
+    margin-bottom: 0rem;
+    padding-bottom: 0rem;
+    border: 0px;
+  }
+
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
@@ -3328,6 +3410,17 @@ body .packs-container {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+
+  body .planes-header .planes-header-background {
+    position: relative;
+    background: url("/src/assets/img/hero/planes.png") no-repeat center center;
+    width: 100%;
+    height: 20vh;
+    background-size: contain;
+    margin-bottom: 0rem;
+    padding-bottom: 0rem;
+    border: 0px;
+  }
 }
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) and (max-width: 992px) {
@@ -3341,6 +3434,16 @@ body .packs-container {
     margin-top: 0rem;
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+  body .planes-header .planes-header-background {
+    position: relative;
+    background: url("/src/assets/img/hero/planes.png") no-repeat center center;
+    width: 100%;
+    height: 20vh;
+    background-size: contain;
+    margin-bottom: 0rem;
+    padding-bottom: 0rem;
+    border: 0px;
   }
 }
 

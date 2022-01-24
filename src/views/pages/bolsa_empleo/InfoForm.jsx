@@ -88,8 +88,6 @@ function InfoForm(props) {
             }
         }
 
-        
-
         console.log(error);
         return error;
     }

@@ -27,6 +27,8 @@ import {
   import { ToastProvider, useToasts } from 'react-toast-notifications';
   import axios from 'axios'
   import { useHistory } from "react-router-dom";
+  import { bounceInLeft } from 'react-animations';
+  import Radium, {StyleRoot} from 'radium';
 
 function SliderTracking(props) {
     const [form, setForm] = useState({
@@ -56,6 +58,8 @@ function SliderTracking(props) {
     // useEffect(()=>{
     //     console.log(form);
     // },[form])
+
+
     
     const handleChange = (e) =>{
         const {name, value} = e.target;
@@ -96,9 +100,16 @@ function SliderTracking(props) {
 
     const getGuiaInfo = async (id) =>{
         const config = {};
-        return await axios.get( `https://ws.conectaguate.com/api/v1/tracking/?clave=${id}`, config,).then(
+        return await axios.get( `https://ws.conectaguate.com/api/v1/site/pedidio/guia/${id}`, config,).then(
             (result) => {
-                return result.data.existe;
+                console.log(result);
+                let exist = false;
+                if(result.data["Data"]["Pedido"] !== null){
+                    exist = true;
+                }
+                return exist;
+        },(error)=>{
+            console.log(error.message);
         });
     }
 
@@ -158,7 +169,9 @@ function SliderTracking(props) {
                 method: 'post',
                 url: 'https://ws.conectaguate.com/api/v1/contacto/new',
                 data: object_send,
-                headers: {"Access-Control-Allow-Origin": "*"}
+                headers: {
+                    'Content-Type': 'application/json'
+                },
               }).then(
                 (result) => {
                   console.log(result);
@@ -205,6 +218,13 @@ function SliderTracking(props) {
         }
     }
 
+    const styles = {
+        bounceInLeft: {
+          animation: 'x 1s',
+          animationName: Radium.keyframes(bounceInLeft, 'bounceInLeft')
+        }
+      }
+
     return (
         <>
          <CRow className="home-slider">
@@ -217,11 +237,14 @@ function SliderTracking(props) {
                     >   
                         <CContainer className="home-slider-container">
                             <CRow className="align-items-end row-tracking">
+                                
                                 <CCol lg="5" className="align-self-end">
-                                    <h1 className="display-3 title">
-                                        ¿Dónde está <br/>
-                                        mi paquete?
-                                    </h1>
+                                    <StyleRoot>
+                                        <h1 className="display-3 title" style={styles.bounceInLeft}>
+                                            ¿Dónde está <br/>
+                                            mi paquete?
+                                        </h1>
+                                    </StyleRoot>
                                 </CCol>
                                     <CCol lg="7" className="align-self-end search-input">
                                     <CInputGroup className="mb-1 input-tracker">

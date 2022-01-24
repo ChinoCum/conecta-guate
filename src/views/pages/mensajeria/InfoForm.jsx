@@ -23,6 +23,7 @@ import {
   } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { useToasts } from 'react-toast-notifications';
+import axios from 'axios'
 
 function InfoForm(props) {
     const [form, setForm] = useState({
@@ -87,6 +88,67 @@ function InfoForm(props) {
                     error = true;
                 }
             }
+        }
+
+        let object_send = {
+            nombre: form.name,
+            correo: form.email,
+            producto: form.empresa,
+            telefono: form.phone,
+            mensaje: `${form.fecha_entrega} ${form.paquetes}`
+        }
+
+        if(!error){
+            axios({
+                method: 'post',
+                url: 'https://ws.conectaguate.com/api/v1/contacto/new',
+                data: object_send,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+              }).then(
+                (result) => {
+                  console.log(result);
+                    addToast(`Pronto nos comunicaremos contigo`, { 
+                        appearance: 'success', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    setTimeout(function(){ 
+                        setForm({
+                            name: '',
+                            email: '',
+                            phone: '',
+                            empresa: '',
+                            fecha_entrega: '',
+                            paquetes: ''
+                        });
+                    }, 1000);
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                  if (error.response) {
+                    console.log(error.response);
+                    addToast(`Hubo un error intentelo mas tarde`, { 
+                        appearance: 'error', 
+                        autoDismiss : true ,
+                        autoDismissTimeout : 4000
+                    });
+                    setTimeout(function(){ 
+                        setForm({
+                            name: '',
+                            email: '',
+                            phone: '',
+                            empresa: '',
+                            fecha_entrega: '',
+                            paquetes: ''
+                        });
+                    }, 1000);
+                  }
+                }
+              );
         }
 
     }

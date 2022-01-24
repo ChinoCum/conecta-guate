@@ -22,6 +22,8 @@ const Tracking = React.lazy(() => import('./views/pages/tracking/Tracking'));
 const Mensajeria = React.lazy(() => import('./views/pages/mensajeria/Mensajeria'))
 const BolsaDeEmpleo = React.lazy(() => import('./views/pages/bolsa_empleo/BolsaDeEmpleo'))
 const Planes = React.lazy(() => import('./views/pages/planes/Planes'))
+const PlanCambio = React.lazy(() => import('./views/pages/planes/PlanCambio'))
+
 
 class App extends Component {
 
@@ -40,6 +42,7 @@ class App extends Component {
                 <Route exact path="/login" name="Login" render={props => <Login {...props}/>} />
                 <Route exact path="/register" name="Register" render={props => <Register {...props}/>} />
                 <Route exact path="/planes" name="Planes" render={props => <Planes {...props}/>} />
+                <Route exact path="/plan-cambio" name="Plan Cambio" render={props => <PlanCambio {...props}/>} />
                 <Route path="/creacion-pedido" name="Creacion de Pedido" render={props => <TheLayout {...props}/>} />
                 <Route path="/cuenta/perfil" name="Perfil" render={props => <TheLayout {...props}/>} />
                 <Route path="/cuenta/password" name="Password" render={props => <TheLayout {...props}/>} />

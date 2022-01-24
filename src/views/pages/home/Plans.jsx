@@ -11,11 +11,8 @@ import {
     CRow,
     CImg
   } from '@coreui/react'
-  import { DocsLink } from 'src/reusable'
-  import CIcon from '@coreui/icons-react'
-  import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-  import { faSearch } from '@fortawesome/free-solid-svg-icons'
-
+import { bounceInLeft, fadeInUp } from 'react-animations';
+import Radium, {StyleRoot} from 'radium';
 
 function Plans(props) {
     const history = useHistory();
@@ -26,44 +23,64 @@ function Plans(props) {
     const title2 = "Rápido";
     const title3 = "Te conectamos";
 
+    const styles = {
+        bounceInLeft: {
+          animation: 'x 1s',
+          animationName: Radium.keyframes(bounceInLeft, 'bounceInLeft')
+        },
+        fadeInUp:{
+            animation: 'x 1s',
+            animationName: Radium.keyframes(fadeInUp, 'fadeInUp')
+        }
+      }
+    
+
     return (
-        <>
-            <CContainer className="home-plans">
-                <CRow className="justify-content-md-center">
-                    {/* <CCol lg="1"></CCol> */}
-                    <CCol className="col-md-auto">
-                        <h3 className="title">
-                            Conectamos emociones y tu <br/> negocio a toda Guatemala
-                        </h3>
-                    </CCol>
-                    {/* <CCol lg="1"></CCol> */}
-                </CRow>
-                <CRow className="home-items-plans">
-                    <CCol sm="4">
-                        <ItemsPlans img_path={img1} title={title1} body={'item1'}/>
-                    </CCol>
-                    <CCol sm="4">
-                        <ItemsPlans img_path={img2} title={title2} body={'item2'}/>
-                    </CCol>
-                    <CCol sm="4">
-                        <ItemsPlans img_path={img3} title={title3} body={'item3'}/>
-                    </CCol>
-                </CRow>
-                <CRow className="justify-content-md-center item-buttons">
-                    {/* <CCol lg="1"></CCol> */}
-                    <CCol className="col-md-auto">
-                        <CButton onClick={()=>{
-                             history.push('/planes');
-                        }} className="button1" type="submit" size="lg" color="secondary">Adquiere tu plan</CButton>
-                    </CCol>
-                    <CCol className="col-md-auto">
-                        <CButton onClick={()=>{
-                             history.push('/mensajeria-corporativa');
-                        }} className="button2" type="submit" size="lg" color="secondary">Mensajeria Corporativa</CButton>
-                    </CCol>
-                    {/* <CCol lg="1"></CCol> */}
-                </CRow>
-            </CContainer>
+        <>  
+            <StyleRoot>
+                <CContainer className="home-plans">
+                    <CRow className="justify-content-md-center">
+                        {/* <CCol lg="1"></CCol> */}
+                        <CCol className="col-md-auto">
+                            <h3 className="title" style={styles.bounceInLeft}>
+                                Conectamos emociones y tu <br/> negocio a toda Guatemala
+                            </h3>
+                        </CCol>
+                        {/* <CCol lg="1"></CCol> */}
+                    </CRow>
+                    <CRow className="home-items-plans">
+                        <CCol sm="4">
+                            <div style={styles.fadeInUp}>
+                                <ItemsPlans img_path={img1} title={title1} body={'item1'}/>
+                            </div>
+                        </CCol>
+                        <CCol sm="4">
+                            <div style={styles.fadeInUp}>
+                                <ItemsPlans img_path={img2} title={title2} body={'item2'}/>
+                            </div>
+                        </CCol>
+                        <CCol sm="4">
+                            <div style={styles.fadeInUp}>
+                                <ItemsPlans img_path={img3} title={title3} body={'item3'}/>
+                            </div>
+                        </CCol>
+                    </CRow>
+                    <CRow className="justify-content-md-center item-buttons">
+                        {/* <CCol lg="1"></CCol> */}
+                        <CCol className="col-md-auto">
+                            <CButton onClick={()=>{
+                                history.push('/planes');
+                            }} className="button1" type="submit" size="lg" color="secondary">Adquiere tu plan</CButton>
+                        </CCol>
+                        <CCol className="col-md-auto">
+                            <CButton onClick={()=>{
+                                history.push('/mensajeria-corporativa');
+                            }} className="button2" type="submit" size="lg" color="secondary">Mensajeria Corporativa</CButton>
+                        </CCol>
+                        {/* <CCol lg="1"></CCol> */}
+                    </CRow>
+                </CContainer>
+            </StyleRoot>
         </>
     )
 }

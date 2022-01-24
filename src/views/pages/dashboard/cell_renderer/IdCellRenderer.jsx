@@ -30,6 +30,10 @@ export default class IdCellRenderer extends Component {
                 background = '#bdc3c7';
                 color = '#000000';
                 break;
+            case 'Creado':
+                background = '#bdc3c7';
+                color = '#000000';
+                break;
             case 'Almacen':
                 background = '#9b59b6';
                 color = '#ffffff';

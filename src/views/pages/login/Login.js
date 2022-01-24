@@ -22,6 +22,7 @@ import { ToastProvider, useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import { loginUser } from 'src/api/apiHandler';
 import { data } from 'react-dom-factories';
+import GoogleLogin from 'react-google-login';
 
 const Login = () => {
   const { addToast } = useToasts();
@@ -30,10 +31,9 @@ const Login = () => {
     username: "",
     password: ""
   });
-
+  const [login_success, setLoginSuccess] = useState(false);
   useEffect(()=>{
     const user = reactLocalStorage.getObject('user');
-
     if(Object.keys(user).length > 0){
       console.log(user);
       if(user !== 'undefined' && user !== undefined && user !== null){
@@ -56,7 +56,13 @@ const Login = () => {
     setLogin(new_data);
   }
 
-  const onSubmit = async () =>{
+  const responseGoogle = (response) => {
+    console.log(response);
+  }  
+
+
+  const onSubmit = async (e) =>{
+    e.preventDefault();
     let error = false;
     let labels = {
       username: "Correo Electrónico",
@@ -96,7 +102,8 @@ const Login = () => {
 
     const dataApi = await loginUser(object_login);
     console.log(dataApi);
-    if(dataApi.valid){
+    if(dataApi.valid && !login_success){
+      setLoginSuccess(true)
       let result = dataApi.response;
       console.log(result);
         addToast(`Login Exitoso`, { 
@@ -106,7 +113,8 @@ const Login = () => {
         });
         reactLocalStorage.setObject('user', {
           'email': login.username,
-          'token': result.data.access_token
+          'token': result.data.access_token,
+          'plan': 'pro'
         });
 
         setLogin({
@@ -127,6 +135,7 @@ const Login = () => {
         });
       }
     }
+    
 
     // axios({
     //   method: 'post',
@@ -222,26 +231,24 @@ const Login = () => {
                       </CRow>
                       <br/>
                       <CRow>
-                        <CCol xs="12">
-                          <CButton 
-                            color="primary" 
-                            className="px-12" 
-                            style={{
-                              width: '100%', 
-                              background:'#D80514', 
-                              border: '1px solid #D80514',
-                              textAlign:'left'
+                        <CCol 
+                          xs="12" 
+                          style={{
+                              display: 'block',
+                              marginLeft: 'auto',
+                              marginRight:'auto',
+                              position: 'relative'
                             }} 
-                            to="/creacion-pedido">
-                              <CImg 
-                                    className="social-icon-button"
-                                    src="/img/icons/google.svg"
-                                    onClick={()=>{
-                                        window.open('https://www.facebook.com/ConectaGuateOficial/', '_blank').focus();
-                                    }}
-                                />
-                              Iniciar Sesión con Google
-                          </CButton>
+                          className="login_google"
+                          >
+                          <GoogleLogin
+                            clientId="619638783948-v4fp9d2b59r0fb7nfi6cpqteja0dai69.apps.googleusercontent.com"
+                            buttonText="Iniciar Sesión con Google"
+                            onSuccess={responseGoogle}
+                            onFailure={responseGoogle}
+                            cookiePolicy={'single_host_origin'}
+                            style={{width: '100%', display:'block'}}
+                          />
                         </CCol>
                       </CRow>
                       <CRow>

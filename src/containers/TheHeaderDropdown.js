@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react'
 import {
   CBadge,
@@ -20,9 +21,11 @@ const TheHeaderDropdown =  () => {
   const { addToast } = useToasts();
 
   useEffect(async ()=>{
+    /* eslint-disable no-alert, no-console */
     const user_object = reactLocalStorage.getObject('user');
     console.log(user_object);
     if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+        setUser({});  
         history.push('/login');
         addToast("Sesión terminada", { 
           appearance: 'error', 
@@ -34,6 +37,7 @@ const TheHeaderDropdown =  () => {
           console.log(user_object);
         
           const data_api = await authUser(user_object.token);
+          console.log(data_api);
 
           if(data_api.valid){
             setUser({
@@ -46,6 +50,7 @@ const TheHeaderDropdown =  () => {
             });
             console.log("data user", data_api);
           }else{
+            reactLocalStorage.remove('user');
             setUser({});
             addToast("Sesión terminada", { 
                 appearance: 'error', 
@@ -64,6 +69,7 @@ const TheHeaderDropdown =  () => {
         });
       }
     }
+    // eslint-disable-next-line no-console
   },[])
 
 

@@ -47,25 +47,12 @@ const _nav =  [
         name: '- Cambio de contraseña',
         to: '/cuenta/password',
       },
-      {
-        _tag: 'CSidebarNavItem',
-        name: '- Recibos',
-        to: '/cuenta/recibos',
-      },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: '- Recibos',
+        //   to: '/cuenta/recibos',
+        // },
     ]
-  },
-  {
-    _tag: 'CSidebarNavItem',
-    name: 'Coberturas',
-    to: '/coberturas',
-    icon: 'cil-location-pin',
-
-  },
-  {
-    _tag: 'CSidebarNavItem',
-    name: 'Recomendaciones',
-    to: '/recomendaciones',
-    icon: 'cil-star',
   },
 
   // {

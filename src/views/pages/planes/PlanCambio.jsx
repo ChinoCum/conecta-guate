@@ -3,14 +3,14 @@ import PropTypes from 'prop-types'
 import PublicFooter from '../global/PublicFooter';
 import HeaderImage from './HeaderImage';
 import PublicHeader from '../global/PublicHeader';
-import PlanesInfo from './PlanesInfo';
-import Packs from './Packs';
+import PlanUpdate from './PlanUpdate';
+
 import { 
     useHistory,
 } from "react-router-dom";
 
 
-function Planes(props) {
+function PlanCambio(props) {
     const history = useHistory();
 
     console.log(history.location.pathname);
@@ -18,16 +18,15 @@ function Planes(props) {
         <>
             {(!history.location.pathname.includes('planes-disponibles'))? <PublicHeader /> : null} 
             <HeaderImage />
-            <PlanesInfo />
-            <Packs />
+            <PlanUpdate />
             <PublicFooter />
         </>
     )
 }
 
-Planes.propTypes = {
+PlanCambio.propTypes = {
 
 }
 
-export default Planes
+export default PlanCambio
 

@@ -41,17 +41,22 @@ import {
   import "react-datepicker/dist/react-datepicker.css";
   import ButtonCellRenderer from './cell_renderer/ButtonCellRenderer'
   import IdCellRenderer from './cell_renderer/IdCellRenderer'
-  
+  import {reactLocalStorage} from 'reactjs-localstorage';
 
 
 function MisEnvios(props) {
     const size = useWindowSize();
+    const history = useHistory();
     const [number_rows, setNumberRows] = useState("20");
     const [aggrid,  setAggrid] = useState(null);
     const [loading, setLoading] = useState(false);
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [input_search, setInputSearch] = useState("");
+    const [user, setUser] = useState({});
+    const [transportes, setTransportes] = useState(null);
+    const [estatus, setEstatus] = useState(null);
+    const [tipos_de_pago, setTiposDePago] = useState(null);
     const [column_definitions, setColumnDefinitions] = useState({
         columnDefs: [
             { 
@@ -88,8 +93,11 @@ function MisEnvios(props) {
                 field: 'link',
                 cellRenderer: 'btnCellRenderer',
                 cellRendererParams: {
-                    clicked: function(field) {
-                      alert(`${field} was clicked`);
+                    clicked: function(url) {
+                        let  getUrl = window.location;
+                        let  baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+                        url = `${baseUrl}#/tracking/${url}`
+                        window.open(url, '_blank').focus();
                     },
                   },
             }
@@ -133,59 +141,57 @@ function MisEnvios(props) {
     }
 
     useEffect(()=>{
-        let random = Math.floor(Math.random() * 1001);
-        let row_data = [];
-        let status = [
-            'Cancelado',
-            'Liquidado',
-            'Devolucion',
-            'Recibido',
-            'Almacen',
-            'Transito',
-            'Completada',
-            'Almacen',
-            'Transito',
-            'Completada',
-        ];
-        let current = 0;
-        for(let i = 0; i < random; i++){
-            let random_ini_date = randomDate(new Date(2012, 0, 1), new Date());
-            let random_fin_date = randomDate(new Date(2012, 0, 1), new Date());
-
-            var dd = String(random_ini_date.getDate()).padStart(2, '0');
-            var mm = String(random_ini_date.getMonth() + 1).padStart(2, '0'); //January is 0!
-            var yyyy = random_ini_date.getFullYear();
-
-            var dd2 = String(random_fin_date.getDate()).padStart(2, '0');
-            var mm2 = String(random_fin_date.getMonth() + 1).padStart(2, '0'); //January is 0!
-            var yyyy2 = random_fin_date.getFullYear();
-
-            const date_ini_str =  dd + '/' + mm + '/' + yyyy;
-            const date_fin_str =  dd2 + '/' + mm2 + '/' + yyyy2;
-
-            let object ={ 
-                pedido: `${i}`, 
-                destinatario: `Nombre ${i} Apellido`, 
-                destino: `Ciudad`,
-                tipo_de_envio: `Pago contra entrega`, 
-                estado: `${status[current]}`, 
-                link: `${i}-pedido`,
-                fecha_creacion: date_ini_str,
-                fecha_entrega: date_fin_str
-            };
-            current = current + 1;
-            if(current === 10){
-                current = 0;
-            }
-            row_data.push(object);
-        }
         setColumnDefinitions({
             ...column_definitions,
-            rowData: row_data
         })
         setLoading(true);
 
     },[])
+
+    useEffect(()=>{
+        const user_object = reactLocalStorage.getObject('user');
+
+        if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+            reactLocalStorage.remove('user');
+            setUser({});
+            history.push('/login');
+            return false;
+        }
+        let base_url = 'https://ws.conectaguate.com/api'
+
+        let transportes = new Promise((resolve, reject) => axios({method:'get',url:base_url+'/v1/site/transportes',headers: {'Authorization': `Bearer ${user_object.token}`}}).then((data)=>resolve({key: 'transportes', data:data.data['Data']},'transportes')));
+        let estatus = new Promise((resolve, reject) => axios({method:'get',url:base_url+'/v1/site/estatus',headers: {'Authorization': `Bearer ${user_object.token}`}}).then((data)=>resolve({key: 'estatus', data:data.data['Data']},'estatus')));
+        let tipos_de_pago = new Promise((resolve, reject) => axios({method:'get',url:base_url+'/v1/site/tipopago',headers: {'Authorization': `Bearer ${user_object.token}`}}).then((data)=>resolve({key: 'tipos_de_pago', data:data.data['Data']},'tipos_de_pago')));
+
+        Promise.all([transportes,estatus,tipos_de_pago]).then((values) => {
+            values.forEach((elem)=>{
+                let obj = {};
+                switch(elem.key){
+                    case 'transportes':
+                        elem.data.forEach((elem)=>{
+                            obj[elem.id] = elem;
+                        })
+                        setTransportes(obj);
+                        break;
+                    case 'estatus':
+                        elem.data.forEach((elem)=>{
+                            obj[elem.id] = elem;
+                        })
+                        setEstatus(obj);
+                        break;
+                    case 'tipos_de_pago':
+                        elem.data.forEach((elem)=>{
+                            obj[elem.id] = elem;
+                        })
+                        setTiposDePago(obj);
+                        break;
+                    default:
+                        ;
+                }
+            })
+            console.log(values);
+        });
+    },[]);
 
     const handleChange = (e) =>{
         const {name, value} = e.target;
@@ -213,6 +219,91 @@ function MisEnvios(props) {
         aggrid.api.paginationSetPageSize(Number(value));
         setNumberRows(value);
     };
+
+    useEffect(()=>{
+        if(transportes !== null && estatus !== null && tipos_de_pago !== null){
+            const user_object = reactLocalStorage.getObject('user');
+            let bearer = "";
+            console.log(user_object);
+
+            if(user_object === 'undefined' || user_object === undefined || user_object === null || Object.keys(user_object).length === 0){
+                reactLocalStorage.remove('user');
+                history.push('/login');
+            }else{  
+                bearer =  `Bearer ${user_object.token}`;
+            }   
+
+            const config = {
+                headers: { 
+                    "Authorization": bearer
+                }
+            };
+
+            axios.get(
+                'https://ws.conectaguate.com/api/v1/site/user/pedidos/',
+                config
+            ).then((response)=>{
+                let data_arr = [];
+                let data = response.data['Data'];
+                let i = 1;
+
+                data.forEach((elem)=>{
+                    console.log(elem);
+                    if(elem.created_at){
+                        let date = new Date(elem.created_at);
+                        let year = date.getFullYear();
+                        let month = date.getMonth()+1;
+                        let dt = date.getDate();
+                        if (dt < 10) {
+                        dt = '0' + dt;
+                        }
+                        if (month < 10) {
+                        month = '0' + month;
+                        }
+                        elem.fecha_creacion = dt+'/'+month+'/'+year;
+                    }
+                
+
+                    let object ={ 
+                        pedido: elem.id, 
+                        destinatario: elem.nombre_destino, 
+                        destino: elem.direccion_destino,
+                        tipo_de_envio: tipos_de_pago[elem.tipo_pago].nombre, 
+                        estado: elem.status, 
+                        link: elem.guia,
+                        fecha_creacion: elem.fecha_creacion,
+                        date_created: elem.created_at,
+                        fecha_entrega: ""
+                    };
+                    data_arr.push(object);
+                    i++;
+                })
+
+                setColumnDefinitions({
+                    ...column_definitions,
+                    rowData: data_arr,
+                    rowDataWithoutFilter: data_arr
+                })
+            });
+        }
+    },[transportes, estatus, tipos_de_pago]);
+
+
+    const searchDate = () =>{
+        let data = column_definitions.rowDataWithoutFilter;
+        let date_filter = data.filter((elem)=>{
+            let start = new Date(startDate);
+            let end = new Date(endDate);
+            let date_filtered = new Date(elem.date_created);
+            if(date_filtered > start && date_filtered < end){
+                return true;
+            }
+        })
+        setColumnDefinitions({
+            ...column_definitions,
+            rowData: date_filter
+        })
+    }
     
 
     return (
@@ -305,6 +396,7 @@ function MisEnvios(props) {
                                         background:'#f3bf34', 
                                         fontWeight: '500'
                                     }}
+                                    onClick={searchDate}
                                     >   
                                         <CRow>
                                             <CCol sm="3" 
