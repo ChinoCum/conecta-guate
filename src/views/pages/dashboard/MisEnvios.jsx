@@ -40,6 +40,7 @@ import {
 
   import "react-datepicker/dist/react-datepicker.css";
   import ButtonCellRenderer from './cell_renderer/ButtonCellRenderer'
+  import DescargarCellRenderer from './cell_renderer/DescargarCellRenderer'
   import IdCellRenderer from './cell_renderer/IdCellRenderer'
   import {reactLocalStorage} from 'reactjs-localstorage';
 
@@ -73,10 +74,10 @@ function MisEnvios(props) {
                 headerName: 'Tipo de envio', 
                 field: 'tipo_de_envio' },
             { 
-                headerName: 'Fecha de Creación', 
+                headerName: 'Creación', 
                 field: 'fecha_creacion' },
             { 
-                headerName: 'Fecha de Entrega', 
+                headerName: 'Entrega', 
                 field: 'fecha_entrega' },
             { 
                 headerName: 'Estado', 
@@ -87,6 +88,19 @@ function MisEnvios(props) {
                     alert(`${field} was clicked`);
                     },
                 }, 
+            },
+            { 
+                haederName: '',  
+                field: 'Descargar',
+                cellRenderer: 'btnCellRendererDescargar',
+                cellRendererParams: {
+                    clicked: function(url) {
+                        let  getUrl = window.location;
+                        let  baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+                        url = `${baseUrl}#/tracking/${url}`
+                        window.open(url, '_blank').focus();
+                    },
+                  },
             },
             { 
                 haederName: '',  
@@ -339,7 +353,7 @@ function MisEnvios(props) {
                     </CCol>
                     <CCol sm="3" className="filter-row-responsive">
                         <CRow>
-                            Fecha de Inicio
+                            Inicio
                         </CRow>
                         <CRow>
                             <DatePicker 
@@ -362,7 +376,7 @@ function MisEnvios(props) {
                     </CCol>
                     <CCol sm="3" className="filter-row-responsive">
                         <CRow>
-                            Fecha de finalización
+                            Finalización
                         </CRow>
                         <CRow>
                             <DatePicker 
@@ -485,6 +499,7 @@ function MisEnvios(props) {
                             onGridReady={onGridReady}
                             frameworkComponents={{
                                 btnCellRenderer: ButtonCellRenderer,
+                                btnCellRendererDescargar: DescargarCellRenderer,
                                 idBtnCellRenderer: IdCellRenderer
                             }}
                             pagination={true}

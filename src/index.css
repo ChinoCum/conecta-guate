@@ -373,9 +373,6 @@ body .tracking-slider .tracking-slider-background .title {
   margin-left: 1rem;
 }
 
-body .tracking-info{
-  
-}
 
 body .tracking-info .stepper-wrapper {
   margin-top: auto;
@@ -486,6 +483,48 @@ body .tracking-info .value-info{
   padding-left: 1rem;
   font-weight: 400;
   color: #153b75;
+}
+
+
+body .products-cross-selling{
+  background-color: none;
+}
+
+body .products-cross-selling .card-bk{
+  background-color: none;
+}
+
+html body .card{
+  background-color: #F8F8F8 !important;
+}
+
+body .products-cross-selling .background-image-card{
+  background-color: none;
+  border-radius: 25px;
+  padding: 0;
+}
+
+
+body .products-cross-selling .img-cross-selling{
+  width: 100%;
+  border-radius: 25px;
+}
+
+body .products-cross-selling .background-image-card-2{
+  background: url("/src/assets/img/sliders/back-card-2.jpg") no-repeat center center;
+  background-color: #cccccc;
+  height: 250px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative; 
+  border-radius: 25px;
+}
+
+body .products-cross-selling .background-image-card-3{
+
+  background-color: #cccccc;
+  border-radius: 25px;
 }
 
 body .tracking-info .background-image-card{
@@ -2955,7 +2994,7 @@ body .c-body .cross-selling-container {
   
 } 
 
-body .c-body .cross-selling-container .card-header{
+body .c-body .cross-selling-container .card-header-2{
   position: relative;
   background: url("/src/assets/img/hero/cross-selling.jpg") no-repeat center center;
   width: 100%;
@@ -2964,7 +3003,7 @@ body .c-body .cross-selling-container .card-header{
   margin-bottom: 0rem;
 }
 
-body .c-body .cross-selling-container .card-header .cross-selling-title {
+body .c-body .cross-selling-container .card-header-2 .cross-selling-title {
   text-align: right;
   display: block;
   bottom: 0;

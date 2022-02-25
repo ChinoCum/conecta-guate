@@ -20,7 +20,8 @@ import {
   CInputGroupText,
   CContainer,
   CCollapse,
-  CImg
+  CImg,
+  CSelect
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import {reactLocalStorage} from 'reactjs-localstorage';
@@ -48,13 +49,13 @@ const CreacionPedido = () => {
         nombre_empresa_remitente: "",
         telefono_remitente: "",
         correo_remitente: "",
-        municipio_remitente: "",
+        municipio_remitente: "test",
         direccion_remitente: "",
         destinatario: "",
         name_destinatario: "",
         telefono_destinatario: "",
         correo_destinatario: "",
-        municipio_destinatario: "",
+        municipio_destinatario: "test",
         direccion_destinatario: "",
         referencias_destinatario: ""
     });
@@ -76,6 +77,12 @@ const CreacionPedido = () => {
     const [estatus_de_pedido, setEstatusDePedido] = useState([]);
     const [tipos_de_transporte, setTiposDeTransporte] = useState([]);
     const [files, setFiles] = useState({});
+    const [departamentos, setDepartamentos] = useState([]);
+    const [municipios, setMunicipios] = useState([]);
+    const [value_departamento, setValueDepartamento] = useState("Guatemala");
+    const [value_municipio, setValueMunicipio] = useState("Guatemala");
+
+    // Fetch de departamentos
 
     const createOrder = async () =>{
         const order = {};
@@ -245,6 +252,53 @@ const CreacionPedido = () => {
                 direccion_remitente: data_usuario.direccion_recoleccion
             })
         });
+
+
+        axios({
+            method: 'get',
+            url: 'https://ws.conectaguate.com/api/v1/site/departamentos',
+            headers: { 
+                'Authorization': bearer
+            },
+        }).then((response)=>{
+            let data = response.data["Data"];
+            console.log(data);
+            setDepartamentos(data);
+        },(error) => {
+            console.log(error);
+            // addToast(`Intentelo mas tarde`, { 
+            //     appearance: 'error', 
+            //     autoDismiss : true ,
+            //     autoDismissTimeout : 4000
+            // });
+            setDepartamentos([]);
+            // reactLocalStorage.remove('user');
+            // history.push('/login');
+            return false;
+        });
+
+        axios({
+            method: 'get',
+            url: 'https://ws.conectaguate.com/api/v1/site/departamentos/1',
+            headers: { 
+                'Authorization': bearer
+            },
+        }).then((response)=>{
+            let data = response.data["Data"];
+            console.log(data);
+            setMunicipios(data.municipios);
+        },(error) => {
+            console.log(error);
+            // addToast(`Intentelo mas tarde`, { 
+            //     appearance: 'error', 
+            //     autoDismiss : true ,
+            //     autoDismissTimeout : 4000
+            // });
+            // reactLocalStorage.remove('user');
+            // history.push('/login');
+            return false;
+        });
+
     },[]);
 
 
@@ -395,6 +449,12 @@ const CreacionPedido = () => {
         return allow;
     }
 
+    // const [departamentos, setDepartamentos] = useState([]);
+    // const [municipios, setMunicipios] = useState([]);
+    // const [value_departamento, setValueDepartamento] = useState("");
+    // const [value_municipio, setValueMunicipio] = useState("");
+
+
   return (
       (user)?
     <div className="creacion-pedido">
@@ -407,6 +467,12 @@ const CreacionPedido = () => {
             checkNextStep={nextStep} 
             payment={payment}
             setPayment={setPayment}
+            departamentos={departamentos}
+            municipios={municipios}
+            value_departamento={value_departamento}
+            value_municipio={value_municipio}
+            setValueDepartamento={setValueDepartamento}
+            setValueMunicipio={setValueMunicipio}
         />
          : 
          (step === 1) ? 
@@ -422,6 +488,7 @@ const CreacionPedido = () => {
             setCod={setCodValue}
             setCupon={setCuponValue}
             setSeguro={setSeguroValue}
+            setCobro={setCobro}
         />
          :  (step === 2) ? 
          <Step3 
@@ -558,7 +625,35 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">Poblado/Municipio</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput value={props.data.municipio_remitente}  onChange={props.handleChange} className="card-input" id="municipio_remitente" placeholder="" required />
+                                    <CRow>
+                                        <CCol sm="5">
+                                            <CFormGroup>
+                                                <CLabel htmlFor="departamento">Departamento</CLabel>
+                                                <CFormGroup>
+                                                    <CSelect onChange={handleChange} value={props.value_departamento} custom name="departamento" id="departamento">
+                                                        <option value=""></option>
+                                                        {props.departamentos.map((elem)=>{
+                                                            return <option key={elem.id} value={elem.nombre}>{elem.nombre}</option>
+                                                        })}
+                                                    </CSelect>
+                                                </CFormGroup>
+                                            </CFormGroup>
+                                        </CCol>
+                                        <CCol sm="5">
+                                            <CFormGroup>
+                                                <CLabel htmlFor="municipio">Municipio</CLabel>
+                                                <CFormGroup>
+                                                    <CSelect onChange={handleChange} value={props.value_municipio} custom name="municipio" id="municipio">
+                                                        <option value=""></option>
+                                                        {props.municipios.map((elem)=>{
+                                                            return <option key={elem.id} value={elem.nombre}>{elem.nombre}</option>
+                                                        })}
+                                                    </CSelect>
+                                                </CFormGroup>
+                                            </CFormGroup>
+                                        </CCol>
+                                    </CRow>
+                                    {/* <CInput value={props.data.municipio_remitente}  onChange={props.handleChange} className="card-input" id="municipio_remitente" placeholder="" required /> */}
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -640,10 +735,38 @@ const Step1 = (props) => {
                         <CCol xs="12">
                             <CFormGroup row>
                                 <CCol xs="12" md="3">
-                                    <CLabel htmlFor="text-input">Poblado/Municipio</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
+                                    <CLabel htmlFor="text-input">Departamento/Municipio</CLabel><CLabel htmlFor="text-input" style={{color:'#cdde0c'}}>*</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput value={props.data.municipio_destinatario} onChange={props.handleChange} className="card-input" id="municipio_destinatario" placeholder="" required />
+                                    <CRow>
+                                        <CCol sm="5">
+                                            <CFormGroup>
+                                                <CLabel htmlFor="departamento">Departamento</CLabel>
+                                                <CFormGroup>
+                                                    <CSelect onChange={handleChange} value={props.value_departamento} custom name="departamento" id="departamento">
+                                                        <option value=""></option>
+                                                        {props.departamentos.map((elem)=>{
+                                                            return <option key={elem.id} value={elem.nombre}>{elem.nombre}</option>
+                                                        })}
+                                                    </CSelect>
+                                                </CFormGroup>
+                                            </CFormGroup>
+                                        </CCol>
+                                        <CCol sm="5">
+                                            <CFormGroup>
+                                                <CLabel htmlFor="municipio">Municipio</CLabel>
+                                                <CFormGroup>
+                                                    <CSelect onChange={handleChange} value={props.value_municipio} custom name="municipios" id="municipios">
+                                                        <option value=""></option>
+                                                        {props.municipios.map((elem)=>{
+                                                            return <option key={elem.id} value={elem.nombre}>{elem.nombre}</option>
+                                                        })}
+                                                    </CSelect>
+                                                </CFormGroup>
+                                            </CFormGroup>
+                                        </CCol>
+                                    </CRow>
+                                    {/* <CInput value={props.data.municipio_destinatario} onChange={props.handleChange} className="card-input" id="municipio_destinatario" placeholder="" required /> */}
                                 </CCol>   
                             </CFormGroup>
                         </CCol>
@@ -667,7 +790,7 @@ const Step1 = (props) => {
                                     <CLabel htmlFor="text-input">Referencias de dirección</CLabel>
                                 </CCol>
                                 <CCol xs="12" md="9">
-                                    <CInput value={props.data.referencias_destinatario} onChange={props.handleChange} className="card-input" id="referencias_destinatario" placeholder="" required />
+                                    <textarea  rows="6"  value={props.data.referencias_destinatario} onChange={props.handleChange} className="card-input" id="referencias_destinatario" placeholder="" required />
                                 </CCol>
                             </CFormGroup>
                         </CCol>
@@ -748,8 +871,18 @@ const Step2 = (props) => {
             if(cod === 'on'){
                 setCod('off');
                 props.setCod(0);
+                props.setCobro({
+                    efectivo: false,
+                    transferencia: false,
+                    contra_entrega: false
+                })
             }else if(cod === 'off'){
                 setCod('on');
+                props.setCobro({
+                    efectivo: false,
+                    transferencia: false,
+                    contra_entrega: true
+                })
             }
         }
         if(id === 'seguro'){
@@ -1044,7 +1177,11 @@ const Step2 = (props) => {
                             <CCol sm="7" className="card-values-conecta">
                                <CRow>
                                     <CCol sm="8">Total Valor Declarado</CCol>
-                                    <CCol sm="4">{(total_valor_declarado === 0) ? '-' : `Q ${total_valor_declarado.toFixed(2)}`}</CCol>
+                                    <CCol sm="4">{
+                                    (input_value_cod === 0 || input_value_cod === '') ? 
+                                        (total_valor_declarado === 0) ? '-' : `Q ${total_valor_declarado.toFixed(2)}`
+                                            : `Q ${input_value_cod.toFixed(2)}`
+                                    }</CCol>
                                </CRow>
                                <CRow className="card-values-conecta">
                                     <CCol sm="8">Seguro Adicional</CCol>

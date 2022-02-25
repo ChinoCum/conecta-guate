@@ -175,6 +175,21 @@ const Register = () => {
     // exceptions from actual bugs in components.
     (error) => {
       if (error.response) {
+        if(error.response.hasOwnProperty("data")){
+          Object.entries(error.response.data).forEach((elem)=>{
+            let data = elem[1];
+            if(Array.isArray(data)){
+               addToast(data[0],
+                { 
+                  appearance: 'error', 
+                  autoDismiss : true ,
+                  autoDismissTimeout : 4000
+              });
+            }
+            console.log(data);
+          });
+        }
+     
         console.log(error.response);
       }
     }
